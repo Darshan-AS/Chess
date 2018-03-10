@@ -1,4 +1,18 @@
 #pragma once
+
+class Position
+{
+	int x;
+	int y;
+public:
+	Position(int, int);
+	~Position();
+	int getRow();
+	int getColumn();
+};
+
+
+
 class Piece
 {
 protected:
@@ -12,8 +26,10 @@ public:
 	Piece();
 	~Piece();
 	int getColor();
-	virtual void getValidMoves(int, int) = 0;
+	virtual vector<Position> getValidMoves(Position) = 0;
 };
+
+
 
 class Pawn :
 	public Piece
@@ -21,5 +37,7 @@ class Pawn :
 public:
 	Pawn(int);
 	~Pawn();
+	vector<Position> getValidMoves(Position);
 };
+
 

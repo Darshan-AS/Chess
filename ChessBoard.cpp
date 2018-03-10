@@ -21,13 +21,13 @@ int ChessBoard::getColumnSize()
 	return sizeof(board[0]) / sizeof(int);
 }
 
-Piece * ChessBoard::getPieceAt(int row, int column)
+Piece * ChessBoard::getPieceAt(Position position)
 {
-	return board[row][column];
+	return board[position.getRow()][position.getColumn()];
 }
 
-void ChessBoard::movePieceTo(int currentRow, int currentColumn, int newRow, int newColumn)
+void ChessBoard::movePieceTo(Position currentPosition, Position newPosition)
 {
-	board[newRow][newColumn] = getPieceAt(currentRow, currentColumn);
-	board[currentRow][currentColumn] = 0;
+	board[newPosition.getRow()][newPosition.getColumn()] = getPieceAt(currentPosition);
+	board[currentPosition.getRow()][currentPosition.getColumn()] = 0;
 }

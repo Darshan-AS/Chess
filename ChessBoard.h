@@ -10,7 +10,7 @@ public:
 	~ChessBoard();
 	int getRowSize();
 	int getColumnSize();
-	Piece * getPieceAt(int, int);
-	void movePieceTo(int, int, int, int);
+	Piece * getPieceAt(Position);
+	void movePieceTo(Position, Position);
 };
 
