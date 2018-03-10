@@ -1,19 +1,16 @@
 #pragma once
+#include "Pieces.h"
+
 class ChessBoard
 {
-	int board[8][8] = { { 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 } };
+	Piece * board[8][8];
+
 public:
 	ChessBoard();
 	~ChessBoard();
 	int getRowSize();
 	int getColumnSize();
-	int getPieceAt(int, int);
+	Piece * getPieceAt(int, int);
+	void movePieceTo(int, int, int, int);
 };
 
