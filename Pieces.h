@@ -41,3 +41,56 @@ public:
 };
 
 
+
+class Knight :
+	public Piece
+{
+public:
+	Knight(int);
+	~Knight();
+	vector<Position> getValidMoves(Position);
+};
+
+
+
+class Bishop :
+	public Piece
+{
+public:
+	Bishop(int);
+	~Bishop();
+	vector<Position> getValidMoves(Position);
+};
+
+
+
+class Rook :
+	public Piece
+{
+public:
+	Rook(int);
+	~Rook();
+	vector<Position> getValidMoves(Position);
+};
+
+
+
+class Queen :
+	public Piece
+{
+public:
+	Queen(int);
+	~Queen();
+	vector<Position> getValidMoves(Position);
+};
+
+
+
+class King :
+	public Piece
+{
+public:
+	King(int);
+	~King();
+	vector<Position> getValidMoves(Position);
+};

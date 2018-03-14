@@ -53,3 +53,81 @@ vector<Position> Pawn::getValidMoves(Position)
 
 	return vector<Position>();
 }
+
+
+Knight::Knight(int color)
+{
+	this->color = color;
+}
+
+
+Knight::~Knight()
+{
+}
+
+vector<Position> Knight::getValidMoves(Position)
+{
+	return vector<Position>();
+}
+
+
+Bishop::Bishop(int color)
+{
+	this->color = color;
+}
+
+
+Bishop::~Bishop()
+{
+}
+
+vector<Position> Bishop::getValidMoves(Position)
+{
+	return vector<Position>();
+}
+
+Rook::Rook(int color)
+{
+	this->color = color;
+}
+
+Rook::~Rook()
+{
+}
+
+vector<Position> Rook::getValidMoves(Position)
+{
+	return vector<Position>();
+}
+
+
+Queen::Queen(int color)
+{
+	this->color = color;
+}
+
+
+Queen::~Queen()
+{
+}
+
+vector<Position> Queen::getValidMoves(Position)
+{
+	return vector<Position>();
+}
+
+
+King::King(int color)
+{
+	this->color = color;
+}
+
+
+King::~King()
+{
+}
+
+vector<Position> King::getValidMoves(Position)
+{
+	return vector<Position>();
+}
