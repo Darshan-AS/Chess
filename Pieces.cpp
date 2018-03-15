@@ -2,6 +2,10 @@
 #include "Pieces.h"
 #include "Board.h"
 
+Position::Position()
+{
+}
+
 Position::Position(int x, int y)
 {
 	this->x = x;
@@ -48,11 +52,52 @@ Pawn::~Pawn()
 vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 {
 	vector<Position> validMoves;
-	Position p(1, 1);
-	cout << p.getRow() << p.getColumn();
-	validMoves.push_back(p);
+	int currentRow = currentPosition.getRow();
+	int currentColumn = currentPosition.getColumn();
+	Position newPosition;
 
-	return vector<Position>();
+	if (this->color == COLOR_BLACK)
+	{
+		if (currentRow == 1)
+		{
+			newPosition = Position(currentRow + 2, currentColumn);
+			validMoves.push_back(newPosition);
+		}
+
+		newPosition = Position(currentRow + 1, currentColumn);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow + 1, currentColumn + 1);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow + 1, currentColumn - 1);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+	}
+	else if (this->color == COLOR_WHITE)
+	{
+		if (currentRow == 6)
+		{
+			newPosition = Position(currentRow - 2, currentColumn);
+			validMoves.push_back(newPosition);
+		}
+
+		newPosition = Position(currentRow - 1, currentColumn);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow - 1, currentColumn - 1);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow - 1, currentColumn + 1);
+		if (board.isValidPosition(newPosition, getColor()))
+			validMoves.push_back(newPosition);
+	}
+
+	return validMoves;
 }
 
 

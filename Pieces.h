@@ -6,6 +6,7 @@ class Position
 	int x;
 	int y;
 public:
+	Position();
 	Position(int, int);
 	~Position();
 	int getRow();

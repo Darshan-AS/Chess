@@ -39,6 +39,8 @@ Board::Board()
 	board[7][5] = new Bishop(Piece::COLOR_WHITE);
 	board[7][6] = new Knight(Piece::COLOR_WHITE);
 	board[7][7] = new Rook(Piece::COLOR_WHITE);
+
+	board[4][2] = new Pawn(Piece::COLOR_WHITE);
 }
 
 Board::~Board()
