@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Pieces.h"
+#include "Board.h"
 
 Position::Position(int x, int y)
 {
@@ -44,7 +45,7 @@ Pawn::~Pawn()
 {
 }
 
-vector<Position> Pawn::getValidMoves(Position)
+vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 {
 	vector<Position> validMoves;
 	Position p(1, 1);
@@ -65,7 +66,7 @@ Knight::~Knight()
 {
 }
 
-vector<Position> Knight::getValidMoves(Position)
+vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 {
 	return vector<Position>();
 }
@@ -81,7 +82,7 @@ Bishop::~Bishop()
 {
 }
 
-vector<Position> Bishop::getValidMoves(Position)
+vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 {
 	return vector<Position>();
 }
@@ -95,7 +96,7 @@ Rook::~Rook()
 {
 }
 
-vector<Position> Rook::getValidMoves(Position)
+vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
 {
 	return vector<Position>();
 }
@@ -111,7 +112,7 @@ Queen::~Queen()
 {
 }
 
-vector<Position> Queen::getValidMoves(Position)
+vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 {
 	return vector<Position>();
 }
@@ -127,7 +128,7 @@ King::~King()
 {
 }
 
-vector<Position> King::getValidMoves(Position)
+vector<Position> King::getValidMoves(Board board, Position currentPosition)
 {
 	return vector<Position>();
 }

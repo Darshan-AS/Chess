@@ -1,4 +1,5 @@
 #pragma once
+class Board;
 
 class Position
 {
@@ -26,7 +27,7 @@ public:
 	Piece();
 	~Piece();
 	int getColor();
-	virtual vector<Position> getValidMoves(Position) = 0;
+	virtual vector<Position> getValidMoves(Board, Position) = 0;
 };
 
 
@@ -37,7 +38,7 @@ class Pawn :
 public:
 	Pawn(int);
 	~Pawn();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };
 
 
@@ -48,7 +49,7 @@ class Knight :
 public:
 	Knight(int);
 	~Knight();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };
 
 
@@ -59,7 +60,7 @@ class Bishop :
 public:
 	Bishop(int);
 	~Bishop();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };
 
 
@@ -70,7 +71,7 @@ class Rook :
 public:
 	Rook(int);
 	~Rook();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };
 
 
@@ -81,7 +82,7 @@ class Queen :
 public:
 	Queen(int);
 	~Queen();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };
 
 
@@ -92,5 +93,5 @@ class King :
 public:
 	King(int);
 	~King();
-	vector<Position> getValidMoves(Position);
+	vector<Position> getValidMoves(Board, Position);
 };

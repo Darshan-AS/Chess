@@ -14,6 +14,6 @@ public:
 	~Board();
 	Piece * getPieceAt(Position);
 	void movePieceTo(Position, Position);
-	static bool isValidPosition(Position);
+	bool isValidPosition(Position, int color);
 };
 
