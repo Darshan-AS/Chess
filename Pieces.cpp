@@ -192,7 +192,16 @@ Queen::~Queen()
 
 vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 {
-	return vector<Position>();
+	addAlong(board, currentPosition, 1, 1);
+	addAlong(board, currentPosition, 1, -1);
+	addAlong(board, currentPosition, -1, 1);
+	addAlong(board, currentPosition, -1, -1);
+	addAlong(board, currentPosition, 1, 0);
+	addAlong(board, currentPosition, 0, 1);
+	addAlong(board, currentPosition, -1, 0);
+	addAlong(board, currentPosition, 0, -1);
+
+	return validMoves;
 }
 
 
