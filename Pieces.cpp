@@ -73,7 +73,7 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
-
+	int row, column;
 	if (this->color == COLOR_BLACK)
 	{
 		if (currentRow == 1)
@@ -81,15 +81,7 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 			newPosition = Position(currentRow + 2, currentColumn);
 			validateAdd(board, newPosition);
 		}
-
-		newPosition = Position(currentRow + 1, currentColumn);
-		validateAdd(board, newPosition);
-
-		newPosition = Position(currentRow + 1, currentColumn + 1);
-		validateAdd(board, newPosition);
-
-		newPosition = Position(currentRow + 1, currentColumn - 1);
-		validateAdd(board, newPosition);
+		row = currentRow + 1;
 	}
 	else if (this->color == COLOR_WHITE)
 	{
@@ -98,14 +90,12 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 			newPosition = Position(currentRow - 2, currentColumn);
 			validateAdd(board, newPosition);
 		}
+		row = currentRow - 1;
+	}
 
-		newPosition = Position(currentRow - 1, currentColumn);
-		validateAdd(board, newPosition);
-
-		newPosition = Position(currentRow - 1, currentColumn - 1);
-		validateAdd(board, newPosition);
-
-		newPosition = Position(currentRow - 1, currentColumn + 1);
+	for (column = currentColumn - 1; column <= currentColumn + 1; column++)
+	{
+		newPosition = Position(row, column);
 		validateAdd(board, newPosition);
 	}
 
