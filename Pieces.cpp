@@ -127,10 +127,9 @@ vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
-	int row, column;
 
 	int stepColumn = 1;
-	for (row = currentRow - 2; row <= currentRow + 2; row++)
+	for (int row = currentRow - 2; row <= currentRow + 2; row++)
 	{
 		if (row == currentRow)
 		{
@@ -230,5 +229,18 @@ King::~King()
 
 vector<Position> King::getValidMoves(Board board, Position currentPosition)
 {
-	return vector<Position>();
+	int currentRow = currentPosition.getRow();
+	int currentColumn = currentPosition.getColumn();
+	Position newPosition;
+
+	for (int row = currentRow - 1; row <= currentRow + 1; row++)
+	{
+		for (int column = currentColumn - 1; column <= currentColumn + 1; column++)
+		{
+			newPosition = Position(row, column);
+			addPositionAt(board, newPosition);
+		}
+	}
+
+	return validMoves;
 }
