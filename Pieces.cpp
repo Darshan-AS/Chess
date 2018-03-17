@@ -81,7 +81,7 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
-	int row, column;
+
 	if (this->color == COLOR_BLACK)
 	{
 		if (currentRow == 1)
@@ -89,7 +89,16 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 			newPosition = Position(currentRow + 2, currentColumn);
 			addPositionAt(board, newPosition);
 		}
-		row = currentRow + 1;
+		newPosition = Position(currentRow + 1, currentColumn);
+		addPositionAt(board, newPosition);
+
+		newPosition = Position(currentRow + 1, currentColumn + 1);
+		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow + 1, currentColumn - 1);
+		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+			validMoves.push_back(newPosition);
 	}
 	else if (this->color == COLOR_WHITE)
 	{
@@ -98,13 +107,16 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 			newPosition = Position(currentRow - 2, currentColumn);
 			addPositionAt(board, newPosition);
 		}
-		row = currentRow - 1;
-	}
-
-	for (column = currentColumn - 1; column <= currentColumn + 1; column++)
-	{
-		newPosition = Position(row, column);
+		newPosition = Position(currentRow - 1, currentColumn);
 		addPositionAt(board, newPosition);
+
+		newPosition = Position(currentRow - 1, currentColumn - 1);
+		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+			validMoves.push_back(newPosition);
+
+		newPosition = Position(currentRow - 1, currentColumn + 1);
+		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+			validMoves.push_back(newPosition);
 	}
 
 	return validMoves;
