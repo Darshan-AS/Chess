@@ -114,9 +114,9 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 
 void Pawn::validateAdd(Board board, Position position)
 {
-	if (board.isValidPosition(position))
+	if (board.isInRange(position) && board.isValidPosition(position))
 		validMoves.push_back(position);
-	else if (board.getPieceAt(position)->getColor() != this->getColor())
+	else if (board.isInRange(position) && board.getPieceAt(position)->getColor() != this->getColor())
 		validMoves.push_back(position);
 }
 
