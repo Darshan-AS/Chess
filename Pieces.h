@@ -67,6 +67,8 @@ public:
 	~Bishop();
 	vector<Position> getValidMoves(Board, Position);
 
+private:
+	void validateAdd(Board, Position, int, int);
 };
 
 

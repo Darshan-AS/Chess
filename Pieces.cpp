@@ -129,7 +129,28 @@ Bishop::~Bishop()
 
 vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 {
-	return vector<Position>();
+	validateAdd(board, currentPosition, 1, 1);
+	validateAdd(board, currentPosition, 1, -1);
+	validateAdd(board, currentPosition, -1, 1);
+	validateAdd(board, currentPosition, -1, -1);
+
+	return validMoves;
+}
+
+void Bishop::validateAdd(Board board, Position currentPosition, int stepRow, int stepColumn)
+{
+	int currentRow = currentPosition.getRow();
+	int currentColumn = currentPosition.getColumn();
+	Position newPosition;
+
+	newPosition = Position(currentRow + stepRow, currentColumn + stepColumn);
+	while (board.isValidPosition(newPosition))
+	{
+		validMoves.push_back(newPosition);
+		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
+	}
+	if (board.getPieceAt(newPosition)->getColor() != this->getColor())
+		validMoves.push_back(newPosition);
 }
 
 Rook::Rook(int color)
