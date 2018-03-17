@@ -72,3 +72,13 @@ bool Board::isValidPosition(Position position)
 
 	return false;
 }
+
+int Board::getCurrentPlayer()
+{
+	return player;
+}
+
+void Board::setCurrentPlayer(int color)
+{
+	player = color;
+}
