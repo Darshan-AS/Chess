@@ -41,7 +41,7 @@ int Piece::getColor()
 	return color;
 }
 
-void Piece::addAlong(Board board, Position currentPosition, int stepRow, int stepColumn)
+void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn)
 {
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
@@ -55,6 +55,14 @@ void Piece::addAlong(Board board, Position currentPosition, int stepRow, int ste
 	}
 	if (board.isInRange(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
 		validMoves.push_back(newPosition);
+}
+
+void Piece::addPositionAt(Board board, Position position)
+{
+	if (board.isInRange(position) && board.isValidPosition(position))
+		validMoves.push_back(position);
+	else if (board.isInRange(position) && board.getPieceAt(position)->getColor() != color)
+		validMoves.push_back(position);
 }
 
 
@@ -79,7 +87,7 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 		if (currentRow == 1)
 		{
 			newPosition = Position(currentRow + 2, currentColumn);
-			validateAdd(board, newPosition);
+			addPositionAt(board, newPosition);
 		}
 		row = currentRow + 1;
 	}
@@ -88,7 +96,7 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 		if (currentRow == 6)
 		{
 			newPosition = Position(currentRow - 2, currentColumn);
-			validateAdd(board, newPosition);
+			addPositionAt(board, newPosition);
 		}
 		row = currentRow - 1;
 	}
@@ -96,18 +104,10 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 	for (column = currentColumn - 1; column <= currentColumn + 1; column++)
 	{
 		newPosition = Position(row, column);
-		validateAdd(board, newPosition);
+		addPositionAt(board, newPosition);
 	}
 
 	return validMoves;
-}
-
-void Pawn::validateAdd(Board board, Position position)
-{
-	if (board.isInRange(position) && board.isValidPosition(position))
-		validMoves.push_back(position);
-	else if (board.isInRange(position) && board.getPieceAt(position)->getColor() != this->getColor())
-		validMoves.push_back(position);
 }
 
 
@@ -140,10 +140,10 @@ Bishop::~Bishop()
 
 vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 {
-	addAlong(board, currentPosition, 1, 1);
-	addAlong(board, currentPosition, 1, -1);
-	addAlong(board, currentPosition, -1, 1);
-	addAlong(board, currentPosition, -1, -1);
+	addPositionAlong(board, currentPosition, 1, 1);
+	addPositionAlong(board, currentPosition, 1, -1);
+	addPositionAlong(board, currentPosition, -1, 1);
+	addPositionAlong(board, currentPosition, -1, -1);
 
 	return validMoves;
 }
@@ -161,10 +161,10 @@ Rook::~Rook()
 
 vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
 {
-	addAlong(board, currentPosition, 1, 0);
-	addAlong(board, currentPosition, 0, 1);
-	addAlong(board, currentPosition, -1, 0);
-	addAlong(board, currentPosition, 0, -1);
+	addPositionAlong(board, currentPosition, 1, 0);
+	addPositionAlong(board, currentPosition, 0, 1);
+	addPositionAlong(board, currentPosition, -1, 0);
+	addPositionAlong(board, currentPosition, 0, -1);
 
 	return validMoves;
 }
@@ -182,14 +182,14 @@ Queen::~Queen()
 
 vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 {
-	addAlong(board, currentPosition, 1, 1);
-	addAlong(board, currentPosition, 1, -1);
-	addAlong(board, currentPosition, -1, 1);
-	addAlong(board, currentPosition, -1, -1);
-	addAlong(board, currentPosition, 1, 0);
-	addAlong(board, currentPosition, 0, 1);
-	addAlong(board, currentPosition, -1, 0);
-	addAlong(board, currentPosition, 0, -1);
+	addPositionAlong(board, currentPosition, 1, 1);
+	addPositionAlong(board, currentPosition, 1, -1);
+	addPositionAlong(board, currentPosition, -1, 1);
+	addPositionAlong(board, currentPosition, -1, -1);
+	addPositionAlong(board, currentPosition, 1, 0);
+	addPositionAlong(board, currentPosition, 0, 1);
+	addPositionAlong(board, currentPosition, -1, 0);
+	addPositionAlong(board, currentPosition, 0, -1);
 
 	return validMoves;
 }

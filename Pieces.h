@@ -32,7 +32,8 @@ public:
 	virtual vector<Position> getValidMoves(Board, Position) = 0;
 
 protected:
-	void addAlong(Board, Position, int, int);
+	void addPositionAlong(Board, Position, int, int);
+	void addPositionAt(Board, Position);
 };
 
 
@@ -44,9 +45,6 @@ public:
 	Pawn(int);
 	~Pawn();
 	vector<Position> getValidMoves(Board, Position);
-
-private:
-	void validateAdd(Board, Position);
 };
 
 
