@@ -19,6 +19,7 @@ class Piece
 {
 protected:
 	int color;
+	vector<Position> validMoves;
 
 public:
 	static const int COLOR_WHITE = 1;
@@ -40,6 +41,9 @@ public:
 	Pawn(int);
 	~Pawn();
 	vector<Position> getValidMoves(Board, Position);
+
+private:
+	void validateAdd(Board, Position);
 };
 
 
@@ -62,6 +66,7 @@ public:
 	Bishop(int);
 	~Bishop();
 	vector<Position> getValidMoves(Board, Position);
+
 };
 
 

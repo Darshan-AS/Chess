@@ -40,7 +40,6 @@ Board::Board()
 	board[7][6] = new Knight(Piece::COLOR_WHITE);
 	board[7][7] = new Rook(Piece::COLOR_WHITE);
 
-	board[4][2] = new Pawn(Piece::COLOR_WHITE);
 }
 
 Board::~Board()
@@ -58,7 +57,7 @@ void Board::movePieceTo(Position currentPosition, Position newPosition)
 	board[currentPosition.getRow()][currentPosition.getColumn()] = 0;
 }
 
-bool Board::isValidPosition(Position position, int color)
+bool Board::isValidPosition(Position position)
 {
 	if (position.getRow() >= MAX_ROWS || position.getColumn() >= MAX_COLUMNS ||
 		position.getRow() < 0 || position.getColumn() < 0)
@@ -66,8 +65,6 @@ bool Board::isValidPosition(Position position, int color)
 
 	if (getPieceAt(position) == nullptr)
 		return true;
-	else if (getPieceAt(position)->getColor() != color)
-		return true;
-	else
-		return false;
+
+	return false;
 }

@@ -51,7 +51,6 @@ Pawn::~Pawn()
 
 vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 {
-	vector<Position> validMoves;
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
@@ -61,43 +60,45 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 		if (currentRow == 1)
 		{
 			newPosition = Position(currentRow + 2, currentColumn);
-			validMoves.push_back(newPosition);
+			validateAdd(board, newPosition);
 		}
 
 		newPosition = Position(currentRow + 1, currentColumn);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 
 		newPosition = Position(currentRow + 1, currentColumn + 1);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 
 		newPosition = Position(currentRow + 1, currentColumn - 1);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 	}
 	else if (this->color == COLOR_WHITE)
 	{
 		if (currentRow == 6)
 		{
 			newPosition = Position(currentRow - 2, currentColumn);
-			validMoves.push_back(newPosition);
+			validateAdd(board, newPosition);
 		}
 
 		newPosition = Position(currentRow - 1, currentColumn);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 
 		newPosition = Position(currentRow - 1, currentColumn - 1);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 
 		newPosition = Position(currentRow - 1, currentColumn + 1);
-		if (board.isValidPosition(newPosition, getColor()))
-			validMoves.push_back(newPosition);
+		validateAdd(board, newPosition);
 	}
 
 	return validMoves;
+}
+
+void Pawn::validateAdd(Board board, Position position)
+{
+	if (board.isValidPosition(position))
+		validMoves.push_back(position);
+	else if (board.getPieceAt(position)->getColor() != this->getColor())
+		validMoves.push_back(position);
 }
 
 
@@ -121,7 +122,6 @@ Bishop::Bishop(int color)
 {
 	this->color = color;
 }
-
 
 Bishop::~Bishop()
 {
