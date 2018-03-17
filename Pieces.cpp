@@ -124,7 +124,30 @@ Knight::~Knight()
 
 vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 {
-	return vector<Position>();
+	int currentRow = currentPosition.getRow();
+	int currentColumn = currentPosition.getColumn();
+	Position newPosition;
+	int row, column;
+
+	int stepColumn = 1;
+	for (row = currentRow - 2; row <= currentRow + 2; row++)
+	{
+		if (row == currentRow)
+		{
+			stepColumn--;
+			stepColumn = -stepColumn;
+			continue;
+		}
+		newPosition = Position(row, currentColumn + stepColumn);
+		addPositionAt(board, newPosition);
+
+		newPosition = Position(row, currentColumn - stepColumn);
+		addPositionAt(board, newPosition);
+
+		stepColumn++;
+	}
+
+	return validMoves;
 }
 
 
