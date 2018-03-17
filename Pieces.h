@@ -30,6 +30,9 @@ public:
 	~Piece();
 	int getColor();
 	virtual vector<Position> getValidMoves(Board, Position) = 0;
+
+protected:
+	void addAlong(Board, Position, int, int);
 };
 
 
@@ -66,9 +69,6 @@ public:
 	Bishop(int);
 	~Bishop();
 	vector<Position> getValidMoves(Board, Position);
-
-private:
-	void validateAdd(Board, Position, int, int);
 };
 
 

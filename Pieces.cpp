@@ -26,10 +26,11 @@ int Position::getColumn()
 	return y;
 }
 
+
+
 Piece::Piece()
 {
 }
-
 
 Piece::~Piece()
 {
@@ -39,6 +40,24 @@ int Piece::getColor()
 {
 	return color;
 }
+
+void Piece::addAlong(Board board, Position currentPosition, int stepRow, int stepColumn)
+{
+	int currentRow = currentPosition.getRow();
+	int currentColumn = currentPosition.getColumn();
+	Position newPosition;
+
+	newPosition = Position(currentRow + stepRow, currentColumn + stepColumn);
+	while (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+	{
+		validMoves.push_back(newPosition);
+		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
+	}
+	if (board.isInRange(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+		validMoves.push_back(newPosition);
+}
+
+
 
 Pawn::Pawn(int color)
 {
@@ -102,6 +121,7 @@ void Pawn::validateAdd(Board board, Position position)
 }
 
 
+
 Knight::Knight(int color)
 {
 	this->color = color;
@@ -118,6 +138,7 @@ vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 }
 
 
+
 Bishop::Bishop(int color)
 {
 	this->color = color;
@@ -129,29 +150,15 @@ Bishop::~Bishop()
 
 vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 {
-	validateAdd(board, currentPosition, 1, 1);
-	validateAdd(board, currentPosition, 1, -1);
-	validateAdd(board, currentPosition, -1, 1);
-	validateAdd(board, currentPosition, -1, -1);
+	addAlong(board, currentPosition, 1, 1);
+	addAlong(board, currentPosition, 1, -1);
+	addAlong(board, currentPosition, -1, 1);
+	addAlong(board, currentPosition, -1, -1);
 
 	return validMoves;
 }
 
-void Bishop::validateAdd(Board board, Position currentPosition, int stepRow, int stepColumn)
-{
-	int currentRow = currentPosition.getRow();
-	int currentColumn = currentPosition.getColumn();
-	Position newPosition;
 
-	newPosition = Position(currentRow + stepRow, currentColumn + stepColumn);
-	while (board.isValidPosition(newPosition))
-	{
-		validMoves.push_back(newPosition);
-		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
-	}
-	if (board.getPieceAt(newPosition)->getColor() != this->getColor())
-		validMoves.push_back(newPosition);
-}
 
 Rook::Rook(int color)
 {
@@ -168,11 +175,11 @@ vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
 }
 
 
+
 Queen::Queen(int color)
 {
 	this->color = color;
 }
-
 
 Queen::~Queen()
 {
@@ -184,11 +191,11 @@ vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 }
 
 
+
 King::King(int color)
 {
 	this->color = color;
 }
-
 
 King::~King()
 {

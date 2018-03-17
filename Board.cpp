@@ -56,12 +56,17 @@ void Board::movePieceTo(Position currentPosition, Position newPosition)
 	board[currentPosition.getRow()][currentPosition.getColumn()] = 0;
 }
 
-bool Board::isValidPosition(Position position)
+bool Board::isInRange(Position position)
 {
 	if (position.getRow() >= MAX_ROWS || position.getColumn() >= MAX_COLUMNS ||
 		position.getRow() < 0 || position.getColumn() < 0)
 		return false;
 
+	return true;
+}
+
+bool Board::isValidPosition(Position position)
+{
 	if (getPieceAt(position) == nullptr)
 		return true;
 
