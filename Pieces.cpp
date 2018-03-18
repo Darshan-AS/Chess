@@ -78,6 +78,7 @@ Pawn::~Pawn()
 
 vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
@@ -87,10 +88,12 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 		if (currentRow == 1)
 		{
 			newPosition = Position(currentRow + 2, currentColumn);
-			addPositionAt(board, newPosition);
+			if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+				validMoves.push_back(newPosition);
 		}
 		newPosition = Position(currentRow + 1, currentColumn);
-		addPositionAt(board, newPosition);
+		if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+			validMoves.push_back(newPosition);
 
 		newPosition = Position(currentRow + 1, currentColumn + 1);
 		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
@@ -105,10 +108,12 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 		if (currentRow == 6)
 		{
 			newPosition = Position(currentRow - 2, currentColumn);
-			addPositionAt(board, newPosition);
+			if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+				validMoves.push_back(newPosition);
 		}
 		newPosition = Position(currentRow - 1, currentColumn);
-		addPositionAt(board, newPosition);
+		if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+			validMoves.push_back(newPosition);
 
 		newPosition = Position(currentRow - 1, currentColumn - 1);
 		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
@@ -136,6 +141,7 @@ Knight::~Knight()
 
 vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
@@ -174,6 +180,7 @@ Bishop::~Bishop()
 
 vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	addPositionAlong(board, currentPosition, 1, 1);
 	addPositionAlong(board, currentPosition, 1, -1);
 	addPositionAlong(board, currentPosition, -1, 1);
@@ -195,6 +202,7 @@ Rook::~Rook()
 
 vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	addPositionAlong(board, currentPosition, 1, 0);
 	addPositionAlong(board, currentPosition, 0, 1);
 	addPositionAlong(board, currentPosition, -1, 0);
@@ -216,6 +224,7 @@ Queen::~Queen()
 
 vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	addPositionAlong(board, currentPosition, 1, 1);
 	addPositionAlong(board, currentPosition, 1, -1);
 	addPositionAlong(board, currentPosition, -1, 1);
@@ -241,6 +250,7 @@ King::~King()
 
 vector<Position> King::getValidMoves(Board board, Position currentPosition)
 {
+	validMoves.clear();
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
