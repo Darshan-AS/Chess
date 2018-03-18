@@ -7,7 +7,7 @@ class Position
 	int y;
 public:
 	Position();
-	Position(int, int);
+	Position(int x, int y);
 	~Position();
 	int getRow();
 	int getColumn();
@@ -29,11 +29,11 @@ public:
 	Piece();
 	~Piece();
 	int getColor();
-	virtual vector<Position> getValidMoves(Board, Position) = 0;
+	virtual vector<Position> getValidMoves(Board board, Position currentPosition) = 0;
 
 protected:
-	void addPositionAlong(Board, Position, int, int);
-	void addPositionAt(Board, Position);
+	void addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn);
+	void addPositionAt(Board board, Position position);
 };
 
 
@@ -42,9 +42,9 @@ class Pawn :
 	public Piece
 {
 public:
-	Pawn(int);
+	Pawn(int color);
 	~Pawn();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
 
 
@@ -53,9 +53,9 @@ class Knight :
 	public Piece
 {
 public:
-	Knight(int);
+	Knight(int color);
 	~Knight();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
 
 
@@ -64,9 +64,9 @@ class Bishop :
 	public Piece
 {
 public:
-	Bishop(int);
+	Bishop(int color);
 	~Bishop();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
 
 
@@ -75,9 +75,9 @@ class Rook :
 	public Piece
 {
 public:
-	Rook(int);
+	Rook(int color);
 	~Rook();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
 
 
@@ -86,9 +86,9 @@ class Queen :
 	public Piece
 {
 public:
-	Queen(int);
+	Queen(int color);
 	~Queen();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
 
 
@@ -97,7 +97,7 @@ class King :
 	public Piece
 {
 public:
-	King(int);
+	King(int color);
 	~King();
-	vector<Position> getValidMoves(Board, Position);
+	vector<Position> getValidMoves(Board board, Position currentPosition);
 };
