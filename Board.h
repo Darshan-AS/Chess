@@ -19,7 +19,7 @@ public:
 	void setPieceAt(Position position, Piece * piece);
 	void movePiece(Position currentPosition, Position destinationPosition);
 	bool isInRange(Position position);
-	bool isValidPosition(Position position);
+	bool containsPieceAt(Position position);
 	int getCurrentPlayer();
 	void setCurrentPlayer(int color);
 	bool isInCheck(int playerColor);

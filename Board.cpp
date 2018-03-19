@@ -80,12 +80,12 @@ bool Board::isInRange(Position position)
 	return true;
 }
 
-bool Board::isValidPosition(Position position)
+bool Board::containsPieceAt(Position position)
 {
 	if (getPieceAt(position) == nullptr)
-		return true;
+		return false;
 
-	return false;
+	return true;
 }
 
 int Board::getCurrentPlayer()
