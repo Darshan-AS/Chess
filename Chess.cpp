@@ -1,5 +1,4 @@
 ﻿// Chess.cpp : Defines the entry point for the console application.
-//
 
 #include "stdafx.h"
 #include "Board.h"
@@ -122,7 +121,8 @@ Position readDestinationPosition(vector<Position> validMoves)
 			return destinationPosition;
 
 	cout << "Position <" << destinatonRow << "," << destinationColumn << "> is not a valid destination\n\n";
-	readDestinationPosition(validMoves);
+	destinationPosition = readDestinationPosition(validMoves);
+	return destinationPosition;
 }
 
 void checkForWinner(Position destinationPosition)
@@ -202,6 +202,7 @@ int main()
 		}
 
 		displayBoard();
+
 		switchPlayer();
 	}
 

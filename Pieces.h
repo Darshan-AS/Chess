@@ -46,6 +46,10 @@ public:
 	Pawn(int color);
 	~Pawn();
 	vector<Position> getValidMoves(Board board, Position currentPosition);
+
+protected:
+	void addPositionAt(Board board, Position position);
+	void addPositionToCapture(Board board, Position position);
 };
 
 

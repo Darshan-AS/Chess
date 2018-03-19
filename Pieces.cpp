@@ -56,7 +56,7 @@ void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow,
 	Position newPosition;
 
 	newPosition = Position(currentRow + stepRow, currentColumn + stepColumn);
-	while (board.isInRange(newPosition) && board.isValidPosition(newPosition))
+	while (board.isInRange(newPosition) && !board.containsPieceAt(newPosition))
 	{
 		validMoves.push_back(newPosition);
 		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
@@ -67,7 +67,7 @@ void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow,
 
 void Piece::addPositionAt(Board board, Position position)
 {
-	if (board.isInRange(position) && board.isValidPosition(position))
+	if (board.isInRange(position) && !board.containsPieceAt(position))
 		validMoves.push_back(position);
 	else if (board.isInRange(position) && board.getPieceAt(position)->getColor() != color)
 		validMoves.push_back(position);
@@ -89,50 +89,39 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 	validMoves.clear();
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
-	Position newPosition;
 
 	if (this->color == COLOR_BLACK)
 	{
 		if (currentRow == 1)
-		{
-			newPosition = Position(currentRow + 2, currentColumn);
-			if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
-				validMoves.push_back(newPosition);
-		}
-		newPosition = Position(currentRow + 1, currentColumn);
-		if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
-			validMoves.push_back(newPosition);
+			addPositionAt(board, Position(currentRow + 2, currentColumn));
 
-		newPosition = Position(currentRow + 1, currentColumn + 1);
-		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
-			validMoves.push_back(newPosition);
-
-		newPosition = Position(currentRow + 1, currentColumn - 1);
-		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
-			validMoves.push_back(newPosition);
+		addPositionAt(board, Position(currentRow + 1, currentColumn));
+		addPositionToCapture(board, Position(currentRow + 1, currentColumn + 1));
+		addPositionToCapture(board, Position(currentRow + 1, currentColumn - 1));
 	}
 	else if (this->color == COLOR_WHITE)
 	{
 		if (currentRow == 6)
-		{
-			newPosition = Position(currentRow - 2, currentColumn);
-			if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
-				validMoves.push_back(newPosition);
-		}
-		newPosition = Position(currentRow - 1, currentColumn);
-		if (board.isInRange(newPosition) && board.isValidPosition(newPosition))
-			validMoves.push_back(newPosition);
+			addPositionAt(board, Position(currentRow - 2, currentColumn));
 
-		newPosition = Position(currentRow - 1, currentColumn - 1);
-		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
-			validMoves.push_back(newPosition);
-
-		newPosition = Position(currentRow - 1, currentColumn + 1);
-		if (board.isInRange(newPosition) && !board.isValidPosition(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
-			validMoves.push_back(newPosition);
+		addPositionAt(board, Position(currentRow - 1, currentColumn));
+		addPositionToCapture(board, Position(currentRow - 1, currentColumn - 1));
+		addPositionToCapture(board, Position(currentRow - 1, currentColumn + 1));
 	}
 
 	return validMoves;
+}
+
+void Pawn::addPositionAt(Board board, Position position)
+{
+	if (board.isInRange(position) && !board.containsPieceAt(position))
+		validMoves.push_back(position);
+}
+
+void Pawn::addPositionToCapture(Board board, Position position)
+{
+	if (board.isInRange(position) && board.containsPieceAt(position) && board.getPieceAt(position)->getColor() != color)
+		validMoves.push_back(position);
 }
 
 
