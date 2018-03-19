@@ -87,12 +87,12 @@ bool isValidSource(Position sourcePosition)
 	Piece * pieceSelected = chessBoard.getPieceAt(sourcePosition);
 	if (pieceSelected == nullptr)
 	{
-		cout << "No Piece found at (" << sourcePosition.getRow() << "," << sourcePosition.getColumn() << ")\n\n";
+		cout << "No Piece found at <" << sourcePosition.getRow() << "," << sourcePosition.getColumn() << ">\n\n";
 		return false;
 	}
 	else if (pieceSelected->getColor() != chessBoard.getCurrentPlayer())
 	{
-		cout << "The " << getPieceName(pieceSelected) << " at (" << sourcePosition.getRow() << "," << sourcePosition.getColumn() << ") belongs to the opponent.\n\n";
+		cout << "The " << getPieceName(pieceSelected) << " at <" << sourcePosition.getRow() << "," << sourcePosition.getColumn() << "> belongs to the opponent.\n\n";
 		return false;
 	}
 	return true;
@@ -111,7 +111,7 @@ Position readDestinationPosition(vector<Position> validMoves)
 	int  destinatonRow, destinationColumn;
 	cout << "Where to? <Row Column> : ";
 	cin >> destinatonRow >> destinationColumn;
-	cout << "\n\n";
+	cout << "\n";
 
 	if (destinatonRow == 8 && destinationColumn == 8)
 		exit(0);
@@ -121,7 +121,7 @@ Position readDestinationPosition(vector<Position> validMoves)
 		if (destinatonRow == validMoves[i].getRow() && destinationColumn == validMoves[i].getColumn())
 			return destinationPosition;
 
-	cout << "Position (" << destinatonRow << "," << destinationColumn << ") is not a valid destination\n\n";
+	cout << "Position <" << destinatonRow << "," << destinationColumn << "> is not a valid destination\n\n";
 	readDestinationPosition(validMoves);
 }
 
@@ -172,6 +172,9 @@ int main()
 	Piece * pieceSelected;
 	while (true)
 	{
+		if (chessBoard.isInCheck(chessBoard.getCurrentPlayer()))
+			cout << "CHECK!\n\n";
+
 		sourcePosition = readSourcePosition();
 		if (isValidSource(sourcePosition))
 			pieceSelected = chessBoard.getPieceAt(sourcePosition);
@@ -187,8 +190,16 @@ int main()
 		displayValidMoves(validMoves);
 
 		destinationPosition = readDestinationPosition(validMoves);
-		checkForWinner(destinationPosition);
-		chessBoard.movePieceTo(sourcePosition, destinationPosition);
+		Piece * destinationPiece = chessBoard.getPieceAt(destinationPosition);
+		chessBoard.movePiece(sourcePosition, destinationPosition);
+		if (chessBoard.isInCheck(chessBoard.getCurrentPlayer()))
+		{
+			chessBoard.movePiece(destinationPosition, sourcePosition);
+			chessBoard.setPieceAt(destinationPosition, destinationPiece);
+			cout << "Moving " << getPieceName(pieceSelected) << " from <" << sourcePosition.getRow() << "," << sourcePosition.getColumn()
+				<< "> to <" << destinationPosition.getRow() << "," << destinationPosition.getColumn() << "> causes CHECK!\n\n";
+			continue;
+		}
 
 		displayBoard();
 		switchPlayer();
