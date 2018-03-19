@@ -11,6 +11,7 @@ public:
 	~Position();
 	int getRow();
 	int getColumn();
+	bool equals(Position position);
 };
 
 

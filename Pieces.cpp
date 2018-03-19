@@ -26,6 +26,14 @@ int Position::getColumn()
 	return y;
 }
 
+bool Position::equals(Position position)
+{
+	if (position.getRow() == this->getRow() && position.getColumn() == this->getColumn())
+		return true;
+
+	return false;
+}
+
 
 
 Piece::Piece()
