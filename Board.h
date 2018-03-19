@@ -4,7 +4,9 @@
 class Board
 {
 	Piece * board[8][8];
-	int player = Piece::COLOR_WHITE;
+	int currentPlayer = Piece::COLOR_WHITE;
+	Position whiteKingPosition = Position(7, 4);
+	Position blackKingPosition = Position(0, 4);
 
 public:
 	static const int MAX_ROWS = 8;
@@ -14,10 +16,12 @@ public:
 	Board();
 	~Board();
 	Piece * getPieceAt(Position position);
-	void movePieceTo(Position currentPosition, Position newPosition);
+	void setPieceAt(Position position, Piece * piece);
+	void movePiece(Position currentPosition, Position destinationPosition);
 	bool isInRange(Position position);
 	bool isValidPosition(Position position);
 	int getCurrentPlayer();
 	void setCurrentPlayer(int color);
+	bool isInCheck(int playerColor);
 };
 

@@ -50,10 +50,25 @@ Piece * Board::getPieceAt(Position position)
 	return board[position.getRow()][position.getColumn()];
 }
 
-void Board::movePieceTo(Position currentPosition, Position newPosition)
+void Board::setPieceAt(Position position, Piece * piece)
 {
-	board[newPosition.getRow()][newPosition.getColumn()] = getPieceAt(currentPosition);
+	board[position.getRow()][position.getColumn()] = piece;
+}
+
+void Board::movePiece(Position currentPosition, Position destinationPosition)
+{
+	Piece * piece = getPieceAt(currentPosition);
+
+	board[destinationPosition.getRow()][destinationPosition.getColumn()] = piece;
 	board[currentPosition.getRow()][currentPosition.getColumn()] = 0;
+
+	if (dynamic_cast<King*>(piece))
+	{
+		if (piece->getColor() == Piece::COLOR_WHITE)
+			whiteKingPosition = destinationPosition;
+		else if (piece->getColor() == Piece::COLOR_BLACK)
+			blackKingPosition = destinationPosition;
+	}
 }
 
 bool Board::isInRange(Position position)
@@ -75,10 +90,36 @@ bool Board::isValidPosition(Position position)
 
 int Board::getCurrentPlayer()
 {
-	return player;
+	return currentPlayer;
 }
 
 void Board::setCurrentPlayer(int color)
 {
-	player = color;
+	currentPlayer = color;
+}
+
+bool Board::isInCheck(int playerColor)
+{
+	Position selfKingPosition;
+	if (playerColor == Piece::COLOR_BLACK)
+		selfKingPosition = blackKingPosition;
+	else if (playerColor == Piece::COLOR_WHITE)
+		selfKingPosition = whiteKingPosition;
+
+	for (int row = 0; row < MAX_ROWS; row++)
+	{
+		for (int column = 0; column < MAX_COLUMNS; column++)
+		{
+			Position position = Position(row, column);
+			Piece * piece = getPieceAt(position);
+			if (piece == nullptr || piece->getColor() == playerColor)
+				continue;
+
+			vector<Position> validMoves = piece->getValidMoves(*this, position);
+			for (int i = 0; i < validMoves.size(); i++)
+				if (validMoves[i].equals(selfKingPosition))
+					return true;
+		}
+	}
+	return false;
 }
