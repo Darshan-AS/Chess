@@ -123,3 +123,36 @@ bool Board::isInCheck(int playerColor)
 	}
 	return false;
 }
+
+bool Board::isCheckMate(int playerColor)
+{
+	for (int row = 0; row < MAX_ROWS; row++)
+	{
+		for (int column = 0; column < MAX_COLUMNS; column++)
+		{
+			Position sourcePosition = Position(row, column);
+			Piece * sourcePiece = getPieceAt(sourcePosition);
+			if (sourcePiece == nullptr || sourcePiece->getColor() != playerColor)
+				continue;
+
+			vector<Position> validMoves = sourcePiece->getValidMoves(*this, sourcePosition);
+			if (validMoves.size() == 0)
+				continue;
+
+			for (int i = 0; i < validMoves.size(); i++)
+			{
+				Piece * destinationPiece = getPieceAt(validMoves[i]);
+				movePiece(sourcePosition, validMoves[i]);
+				if (!isInCheck(playerColor))
+				{
+					movePiece(validMoves[i], sourcePosition);
+					setPieceAt(validMoves[i], destinationPiece);
+					return false;
+				}
+				movePiece(validMoves[i], sourcePosition);
+				setPieceAt(validMoves[i], destinationPiece);
+			}
+		}
+	}
+	return true;
+}

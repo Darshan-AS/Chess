@@ -23,5 +23,6 @@ public:
 	int getCurrentPlayer();
 	void setCurrentPlayer(int color);
 	bool isInCheck(int playerColor);
+	bool isCheckMate(int playerColor);
 };
 
