@@ -34,6 +34,11 @@ bool Position::equals(Position position)
 	return false;
 }
 
+string Position::toString()
+{
+	return "<" + to_string(getRow()) + " " + to_string(getColumn()) + ">";
+}
+
 
 
 Piece::Piece()
@@ -49,6 +54,14 @@ int Piece::getColor()
 	return color;
 }
 
+bool Piece::belongsTo(int playerColor)
+{
+	if (getColor() == playerColor)
+		return true;
+
+	return false;
+}
+
 void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn)
 {
 	int currentRow = currentPosition.getRow();
@@ -61,7 +74,7 @@ void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow,
 		validMoves.push_back(newPosition);
 		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
 	}
-	if (board.isInRange(newPosition) && board.getPieceAt(newPosition)->getColor() != color)
+	if (board.isInRange(newPosition) && !board.getPieceAt(newPosition)->belongsTo(color))
 		validMoves.push_back(newPosition);
 }
 
@@ -69,7 +82,7 @@ void Piece::addPositionAt(Board board, Position position)
 {
 	if (board.isInRange(position) && !board.containsPieceAt(position))
 		validMoves.push_back(position);
-	else if (board.isInRange(position) && board.getPieceAt(position)->getColor() != color)
+	else if (board.isInRange(position) && !board.getPieceAt(position)->belongsTo(color))
 		validMoves.push_back(position);
 }
 
@@ -120,7 +133,7 @@ void Pawn::addPositionAt(Board board, Position position)
 
 void Pawn::addPositionToCapture(Board board, Position position)
 {
-	if (board.isInRange(position) && board.containsPieceAt(position) && board.getPieceAt(position)->getColor() != color)
+	if (board.isInRange(position) && board.containsPieceAt(position) && !board.getPieceAt(position)->belongsTo(color))
 		validMoves.push_back(position);
 }
 

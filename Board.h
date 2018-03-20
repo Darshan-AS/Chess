@@ -15,14 +15,17 @@ public:
 public:
 	Board();
 	~Board();
+
 	Piece * getPieceAt(Position position);
 	void setPieceAt(Position position, Piece * piece);
-	void movePiece(Position currentPosition, Position destinationPosition);
-	bool isInRange(Position position);
 	bool containsPieceAt(Position position);
-	int getCurrentPlayer();
-	void setCurrentPlayer(int color);
+	void movePiece(Position currentPosition, Position destinationPosition);
+
+	bool isInRange(Position position);
 	bool isInCheck(int playerColor);
 	bool isCheckMate(int playerColor);
+
+	int getCurrentPlayer();
+	void setCurrentPlayer(int color);
 };
 

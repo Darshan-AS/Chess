@@ -9,9 +9,11 @@ public:
 	Position();
 	Position(int x, int y);
 	~Position();
+
 	int getRow();
 	int getColumn();
 	bool equals(Position position);
+	string toString();
 };
 
 
@@ -31,6 +33,7 @@ public:
 	~Piece();
 	int getColor();
 	virtual vector<Position> getValidMoves(Board board, Position currentPosition) = 0;
+	bool belongsTo(int playerColor);
 
 protected:
 	void addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn);

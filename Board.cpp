@@ -55,6 +55,14 @@ void Board::setPieceAt(Position position, Piece * piece)
 	board[position.getRow()][position.getColumn()] = piece;
 }
 
+bool Board::containsPieceAt(Position position)
+{
+	if (getPieceAt(position) == nullptr)
+		return false;
+
+	return true;
+}
+
 void Board::movePiece(Position currentPosition, Position destinationPosition)
 {
 	Piece * piece = getPieceAt(currentPosition);
@@ -78,24 +86,6 @@ bool Board::isInRange(Position position)
 		return false;
 
 	return true;
-}
-
-bool Board::containsPieceAt(Position position)
-{
-	if (getPieceAt(position) == nullptr)
-		return false;
-
-	return true;
-}
-
-int Board::getCurrentPlayer()
-{
-	return currentPlayer;
-}
-
-void Board::setCurrentPlayer(int color)
-{
-	currentPlayer = color;
 }
 
 bool Board::isInCheck(int playerColor)
@@ -155,4 +145,14 @@ bool Board::isCheckMate(int playerColor)
 		}
 	}
 	return true;
+}
+
+int Board::getCurrentPlayer()
+{
+	return currentPlayer;
+}
+
+void Board::setCurrentPlayer(int color)
+{
+	currentPlayer = color;
 }
