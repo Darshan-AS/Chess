@@ -105,21 +105,21 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 
 	if (this->color == COLOR_BLACK)
 	{
-		if (currentRow == 1)
-			addPositionAt(board, Position(currentRow + 2, currentColumn));
-
 		addPositionAt(board, Position(currentRow + 1, currentColumn));
 		addPositionToCapture(board, Position(currentRow + 1, currentColumn + 1));
 		addPositionToCapture(board, Position(currentRow + 1, currentColumn - 1));
+
+		if (currentRow == 1 && !board.containsPieceAt(Position(currentRow + 1, currentColumn)))
+			addPositionAt(board, Position(currentRow + 2, currentColumn));
 	}
 	else if (this->color == COLOR_WHITE)
 	{
-		if (currentRow == 6)
-			addPositionAt(board, Position(currentRow - 2, currentColumn));
-
 		addPositionAt(board, Position(currentRow - 1, currentColumn));
 		addPositionToCapture(board, Position(currentRow - 1, currentColumn - 1));
 		addPositionToCapture(board, Position(currentRow - 1, currentColumn + 1));
+
+		if (currentRow == 6 && !board.containsPieceAt(Position(currentRow - 1, currentColumn)))
+			addPositionAt(board, Position(currentRow - 2, currentColumn));
 	}
 
 	return validMoves;
