@@ -1,8 +1,8 @@
 #pragma once
 #include "Pieces.h"
 
-class Board
-{
+class Board {
+
 	Piece * board[8][8];
 	int currentPlayer = Piece::COLOR_WHITE;
 	Position whiteKingPosition = Position(7, 4);
@@ -14,7 +14,6 @@ public:
 
 public:
 	Board();
-	~Board();
 
 	Piece * getPieceAt(Position position);
 	void setPieceAt(Position position, Piece * piece);

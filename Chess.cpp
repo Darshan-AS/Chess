@@ -5,15 +5,15 @@
 #include <algorithm>
 #include "Chess.h"
 
-string getPieceName(Piece * piece)
-{
+string getPieceName(Piece * piece) {
 	string name;
-	if (piece == nullptr)
-	{
+
+	if (piece == nullptr) {
 		name = "-";
 		return name;
 	} 
-	else if (dynamic_cast<Pawn*>(piece))
+
+	if (dynamic_cast<Pawn*>(piece))
 		name = "pawn";
 	else if (dynamic_cast<Knight*>(piece))
 		name = "knight";
@@ -32,39 +32,38 @@ string getPieceName(Piece * piece)
 	return name;
 }
 
-void displayBoard()
-{
+void displayBoard() {
 	string name;
 
 	cout << "-------------------------------------------------------------------------------------------------------\n";
 	for (int j = 0; j < Board::MAX_COLUMNS; j++)
 		cout << "\t" << j;
 	cout << "\n\n";
-	for (int i = 0; i < Board::MAX_ROWS; i++)
-	{
+
+	for (int i = 0; i < Board::MAX_ROWS; i++) {
 		cout << " " << i << "\t";
-		for (int j = 0; j < Board::MAX_COLUMNS; j++)
-		{
+
+		for (int j = 0; j < Board::MAX_COLUMNS; j++) {
 			Piece * piece = board.getPieceAt(Position(i, j));
 			name = getPieceName(piece);
 			cout << name << "\t";
 		}
 		cout << "\n\n";
 	}
+
 	cout << "-------------------------------------------------------------------------------------------------------\n";
 	cout << "\n";
 }
 
-void displayInstructions()
-{
+void displayInstructions() {
 	cout << "Welocme to Chess!\n\n";
 	cout << "The uppercase pieces represents WHITE and the lowercase represents BLACK.\n";
 	cout << "Enter <8 8> as <Row Column> values to quit.\n\n";
 }
 
-Position readSourcePosition()
-{
+Position readSourcePosition() {
 	int sourceRow, sourceColumn;
+
 	cout << "Which Piece? <Row Column> : ";
 	cin >> sourceRow >> sourceColumn;
 	cout << "\n";
@@ -73,8 +72,7 @@ Position readSourcePosition()
 		exit(0);
 
 	Position sourcePosition = Position(sourceRow, sourceColumn);
-	if (!board.isInRange(sourcePosition))
-	{
+	if (!board.isInRange(sourcePosition)) {
 		cout << "Position " << sourcePosition.toString() << " is Invalid." << "\n\n";
 		readSourcePosition();
 	}
@@ -82,33 +80,34 @@ Position readSourcePosition()
 	return sourcePosition;
 }
 
-bool isValidSource(Position sourcePosition)
-{
+bool isValidSource(Position sourcePosition) {
 	Piece * pieceSelected = board.getPieceAt(sourcePosition);
-	if (!board.containsPieceAt(sourcePosition))
-	{
+
+	if (!board.containsPieceAt(sourcePosition)) {
+
 		cout << "No Piece found at " << sourcePosition.toString() << "\n\n";
 		return false;
-	}
-	else if (!pieceSelected->belongsTo(board.getCurrentPlayer()))
-	{
+
+	} else if (!pieceSelected->belongsTo(board.getCurrentPlayer())) {
+
 		cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " belongs to the opponent.\n\n";
 		return false;
 	}
+
 	return true;
 }
 
-void displayValidMoves(vector<Position> validMoves)
-{
+void displayValidMoves(vector<Position> validMoves) {
 	cout << "Valid Moves <Row Column> : ";
+
 	for (int i = 0; i < validMoves.size(); i++)
 		cout << validMoves[i].toString() << "    ";
 	cout << "\n\n";
 }
 
-Position readDestinationPosition(vector<Position> validMoves)
-{
+Position readDestinationPosition(vector<Position> validMoves) {
 	int  destinatonRow, destinationColumn;
+
 	cout << "Where to? <Row Column> : ";
 	cin >> destinatonRow >> destinationColumn;
 	cout << "\n";
@@ -126,14 +125,15 @@ Position readDestinationPosition(vector<Position> validMoves)
 	return destinationPosition;
 }
 
-void switchPlayer()
-{
-	switch (board.getCurrentPlayer())
-	{
+void switchPlayer() {
+
+	switch (board.getCurrentPlayer()) {
+
 	case Piece::COLOR_WHITE:
 		board.setCurrentPlayer(Piece::COLOR_BLACK);
 		cout << "Player Black's turn\n\n";
 		break;
+
 	case Piece::COLOR_BLACK:
 		board.setCurrentPlayer(Piece::COLOR_WHITE);
 		cout << "Player White's turn\n\n";
@@ -141,40 +141,42 @@ void switchPlayer()
 	}
 }
 
-void displayGameOver()
-{
+void displayGameOver() {
 	cout << "CHECKMATE!" << "\n\n";
-	switch (board.getCurrentPlayer())
-	{
+
+	switch (board.getCurrentPlayer()) {
+
 	case Piece::COLOR_WHITE:
 		cout << "Player Black won!" << "\n\n";
 		break;
+
 	case Piece::COLOR_BLACK:
 		cout << "Player White WON!" << "\n\n";
 		break;
 	}
+
 	cout << "Type 'quit' to exit the game.\n";
+
 	string temp;
-	while (true)
-	{
+	while (true) {
 		cin >> temp;
+
 		if (temp == "quit")
 			exit(0);
 	}
 }
 
-int main()
-{
+int main() {
 	displayInstructions();
 	displayBoard();
 
 	cout << "Player White's turn.\n\n";
 	Position sourcePosition, destinationPosition;
 	Piece * pieceSelected;
-	while (true)
-	{
-		if (board.isInCheck(board.getCurrentPlayer()))
-		{
+
+	while (true) {
+
+		if (board.isInCheck(board.getCurrentPlayer())) {
 			if (board.isCheckMate(board.getCurrentPlayer()))
 				displayGameOver();
 			cout << "CHECK!\n\n";
@@ -187,8 +189,7 @@ int main()
 			continue;
 
 		vector<Position> validMoves = pieceSelected->getValidMoves(board, sourcePosition);
-		if (validMoves.size() == 0)
-		{
+		if (validMoves.size() == 0) {
 			cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " can't move.\n\n";
 			continue;
 		}
@@ -197,18 +198,20 @@ int main()
 		destinationPosition = readDestinationPosition(validMoves);
 		Piece * destinationPiece = board.getPieceAt(destinationPosition);
 		board.movePiece(sourcePosition, destinationPosition);
-		if (board.isInCheck(board.getCurrentPlayer()))
-		{
+
+		if (board.isInCheck(board.getCurrentPlayer())) {
+
 			board.movePiece(destinationPosition, sourcePosition);
 			board.setPieceAt(destinationPosition, destinationPiece);
+
 			cout << "Moving " << getPieceName(pieceSelected) << " from " << sourcePosition.toString()
 				<< " to " << destinationPosition.toString() << " is Invalid." << "\n"
 				<< "CHECK not resolved or move leads to CHECK!" << "\n\n";
+
 			continue;
 		}
 
 		displayBoard();
-
 		switchPlayer();
 	}
 

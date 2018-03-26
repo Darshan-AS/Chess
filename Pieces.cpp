@@ -2,84 +2,64 @@
 #include "Pieces.h"
 #include "Board.h"
 
-Position::Position()
-{
-}
+Position::Position() {}
 
-Position::Position(int x, int y)
-{
+Position::Position(int x, int y) {
 	this->x = x;
 	this->y = y;
 }
 
-Position::~Position()
-{
-}
-
-int Position::getRow()
-{
+int Position::getRow() {
 	return x;
 }
 
-int Position::getColumn()
-{
+int Position::getColumn() {
 	return y;
 }
 
-bool Position::equals(Position position)
-{
+bool Position::equals(Position position) {
 	if (position.getRow() == this->getRow() && position.getColumn() == this->getColumn())
 		return true;
 
 	return false;
 }
 
-string Position::toString()
-{
+string Position::toString() {
 	return "<" + to_string(getRow()) + " " + to_string(getColumn()) + ">";
 }
 
 
 
-Piece::Piece()
-{
-}
+Piece::Piece() {}
 
-Piece::~Piece()
-{
-}
-
-int Piece::getColor()
-{
+int Piece::getColor() {
 	return color;
 }
 
-bool Piece::belongsTo(int playerColor)
-{
+bool Piece::belongsTo(int playerColor) {
 	if (getColor() == playerColor)
 		return true;
 
 	return false;
 }
 
-void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn)
-{
+void Piece::addPositionAlong(Board board, Position currentPosition, int stepRow, int stepColumn) {
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
 
 	newPosition = Position(currentRow + stepRow, currentColumn + stepColumn);
-	while (board.isInRange(newPosition) && !board.containsPieceAt(newPosition))
-	{
+	while (board.isInRange(newPosition) && !board.containsPieceAt(newPosition)) {
 		validMoves.push_back(newPosition);
 		newPosition = Position(newPosition.getRow() + stepRow, newPosition.getColumn() + stepColumn);
 	}
+
 	if (board.isInRange(newPosition) && !board.getPieceAt(newPosition)->belongsTo(color))
 		validMoves.push_back(newPosition);
 }
 
-void Piece::addPositionAt(Board board, Position position)
-{
+void Piece::addPositionAt(Board board, Position position) {
+
 	if (board.isInRange(position) && !board.containsPieceAt(position))
 		validMoves.push_back(position);
 	else if (board.isInRange(position) && !board.getPieceAt(position)->belongsTo(color))
@@ -88,32 +68,27 @@ void Piece::addPositionAt(Board board, Position position)
 
 
 
-Pawn::Pawn(int color)
-{
+Pawn::Pawn(int color) {
 	this->color = color;
 }
 
-Pawn::~Pawn()
-{
-}
-
-vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> Pawn::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 
-	if (this->color == COLOR_BLACK)
-	{
+	if (this->color == COLOR_BLACK) {
+
 		addPositionAt(board, Position(currentRow + 1, currentColumn));
 		addPositionToCapture(board, Position(currentRow + 1, currentColumn + 1));
 		addPositionToCapture(board, Position(currentRow + 1, currentColumn - 1));
 
 		if (currentRow == 1 && !board.containsPieceAt(Position(currentRow + 1, currentColumn)))
 			addPositionAt(board, Position(currentRow + 2, currentColumn));
-	}
-	else if (this->color == COLOR_WHITE)
-	{
+
+	} else if (this->color == COLOR_WHITE) {
+
 		addPositionAt(board, Position(currentRow - 1, currentColumn));
 		addPositionToCapture(board, Position(currentRow - 1, currentColumn - 1));
 		addPositionToCapture(board, Position(currentRow - 1, currentColumn + 1));
@@ -125,46 +100,38 @@ vector<Position> Pawn::getValidMoves(Board board, Position currentPosition)
 	return validMoves;
 }
 
-void Pawn::addPositionAt(Board board, Position position)
-{
+void Pawn::addPositionAt(Board board, Position position) {
 	if (board.isInRange(position) && !board.containsPieceAt(position))
 		validMoves.push_back(position);
 }
 
-void Pawn::addPositionToCapture(Board board, Position position)
-{
+void Pawn::addPositionToCapture(Board board, Position position) {
 	if (board.isInRange(position) && board.containsPieceAt(position) && !board.getPieceAt(position)->belongsTo(color))
 		validMoves.push_back(position);
 }
 
 
 
-Knight::Knight(int color)
-{
+Knight::Knight(int color) {
 	this->color = color;
 }
 
-
-Knight::~Knight()
-{
-}
-
-vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> Knight::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
 
 	int stepColumn = 1;
-	for (int row = currentRow - 2; row <= currentRow + 2; row++)
-	{
-		if (row == currentRow)
-		{
+	for (int row = currentRow - 2; row <= currentRow + 2; row++) {
+
+		if (row == currentRow) {
 			stepColumn--;
 			stepColumn = -stepColumn;
 			continue;
 		}
+
 		newPosition = Position(row, currentColumn + stepColumn);
 		addPositionAt(board, newPosition);
 
@@ -179,18 +146,13 @@ vector<Position> Knight::getValidMoves(Board board, Position currentPosition)
 
 
 
-Bishop::Bishop(int color)
-{
+Bishop::Bishop(int color) {
 	this->color = color;
 }
 
-Bishop::~Bishop()
-{
-}
-
-vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> Bishop::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	addPositionAlong(board, currentPosition, 1, 1);
 	addPositionAlong(board, currentPosition, 1, -1);
 	addPositionAlong(board, currentPosition, -1, 1);
@@ -201,18 +163,13 @@ vector<Position> Bishop::getValidMoves(Board board, Position currentPosition)
 
 
 
-Rook::Rook(int color)
-{
+Rook::Rook(int color) {
 	this->color = color;
 }
 
-Rook::~Rook()
-{
-}
-
-vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> Rook::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	addPositionAlong(board, currentPosition, 1, 0);
 	addPositionAlong(board, currentPosition, 0, 1);
 	addPositionAlong(board, currentPosition, -1, 0);
@@ -223,18 +180,13 @@ vector<Position> Rook::getValidMoves(Board board, Position currentPosition)
 
 
 
-Queen::Queen(int color)
-{
+Queen::Queen(int color) {
 	this->color = color;
 }
 
-Queen::~Queen()
-{
-}
-
-vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> Queen::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	addPositionAlong(board, currentPosition, 1, 1);
 	addPositionAlong(board, currentPosition, 1, -1);
 	addPositionAlong(board, currentPosition, -1, 1);
@@ -249,30 +201,22 @@ vector<Position> Queen::getValidMoves(Board board, Position currentPosition)
 
 
 
-King::King(int color)
-{
+King::King(int color) {
 	this->color = color;
 }
 
-King::~King()
-{
-}
-
-vector<Position> King::getValidMoves(Board board, Position currentPosition)
-{
+vector<Position> King::getValidMoves(Board board, Position currentPosition) {
 	validMoves.clear();
+
 	int currentRow = currentPosition.getRow();
 	int currentColumn = currentPosition.getColumn();
 	Position newPosition;
 
 	for (int row = currentRow - 1; row <= currentRow + 1; row++)
-	{
-		for (int column = currentColumn - 1; column <= currentColumn + 1; column++)
-		{
+		for (int column = currentColumn - 1; column <= currentColumn + 1; column++) {
 			newPosition = Position(row, column);
 			addPositionAt(board, newPosition);
 		}
-	}
 
 	return validMoves;
 }

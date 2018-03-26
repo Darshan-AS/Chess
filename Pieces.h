@@ -1,14 +1,13 @@
 #pragma once
 class Board;
 
-class Position
-{
+class Position {
 	int x;
 	int y;
+
 public:
 	Position();
 	Position(int x, int y);
-	~Position();
 
 	int getRow();
 	int getColumn();
@@ -18,8 +17,8 @@ public:
 
 
 
-class Piece
-{
+class Piece {
+
 protected:
 	int color;
 	vector<Position> validMoves;
@@ -43,8 +42,8 @@ protected:
 
 
 class Pawn :
-	public Piece
-{
+	public Piece {
+
 public:
 	Pawn(int color);
 	~Pawn();
@@ -58,8 +57,8 @@ protected:
 
 
 class Knight :
-	public Piece
-{
+	public Piece {
+
 public:
 	Knight(int color);
 	~Knight();
@@ -69,8 +68,8 @@ public:
 
 
 class Bishop :
-	public Piece
-{
+	public Piece {
+
 public:
 	Bishop(int color);
 	~Bishop();
@@ -80,8 +79,8 @@ public:
 
 
 class Rook :
-	public Piece
-{
+	public Piece {
+
 public:
 	Rook(int color);
 	~Rook();
@@ -91,8 +90,8 @@ public:
 
 
 class Queen :
-	public Piece
-{
+	public Piece {
+
 public:
 	Queen(int color);
 	~Queen();
@@ -102,8 +101,8 @@ public:
 
 
 class King :
-	public Piece
-{
+	public Piece {
+
 public:
 	King(int color);
 	~King();
