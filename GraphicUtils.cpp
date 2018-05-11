@@ -1,23 +1,31 @@
 #include "stdafx.h"
 #include "GraphicUtils.h"
 
-void GraphicUtils::drawPiece(Piece * piece, int x, int z) {
+void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 
 	if (piece == nullptr)
 		return;
 
+	int color = piece->getColor();
+
+	
+	if (color == Piece::COLOR_WHITE)
+		glColor3ub(250, 235, 215);
+	else if (color == Piece::COLOR_BLACK)
+		glColor3ub(15, 25, 30);
+
 	if (dynamic_cast<Pawn*>(piece))
-		drawPawn(x, 0, z, 0);
+		drawPawn(x, 0, z, color);
 	else if (dynamic_cast<Knight*>(piece))
-		drawKnight(x, 0, z, 0);
+		drawKnight(x, 0, z, color);
 	else if (dynamic_cast<Bishop*>(piece))
-		drawBishop(x, 0, z, 0);
+		drawBishop(x, 0, z, color);
 	else if (dynamic_cast<Rook*>(piece))
-		drawRook(x, 0, z, 0);
+		drawRook(x, 0, z, color);
 	else if (dynamic_cast<Queen*>(piece))
-		drawQueen(x, 0, z, 0);
+		drawQueen(x, 0, z, color);
 	if (dynamic_cast<King*>(piece))
-		drawKing(x, 0, z, 0);
+		drawKing(x, 0, z, color);
 
 }
 
@@ -37,9 +45,9 @@ void GraphicUtils::drawBoard(Board board) {
 		for (int j = 0; j < 8; j++) {
 			glPushMatrix();
 			if (i % 2 == j % 2)
-				glColor3f(0.2, 0.2, 0.2);
-			else
 				glColor3f(0.8, 0.8, 0.8);
+			else
+				glColor3f(0.2, 0.2, 0.2);
 			glTranslatef(i, 0, j);
 			glutSolidCube(1);
 			glPopMatrix();

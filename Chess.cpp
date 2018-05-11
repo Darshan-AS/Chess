@@ -227,7 +227,7 @@ void setUpGameWindow() {
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-5, 12, -5, 5, 10, 30);
+	glFrustum(-5, 13, -3, 3, 10, 30);
 	//glOrtho(-2, 9, -2, 9, -2, 10);
 	//glOrtho(-5, 12, -5, 5, 10, 30);
 	glMatrixMode(GL_MODELVIEW);
@@ -238,29 +238,67 @@ void setUpGameWindow() {
 void drawGame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(-13, 15, 3.5, 3.5, 0, 3.5, 0, 1, 0);
+	gluLookAt(3.5, 10, 16, 3.5, 0, 3.5, 0, 1, 0);
+
+	//displayInstructions();
+	//displayBoard();
 	GraphicUtils::drawBoard(board);
-
-	/*glTranslatef(-8, 0, 0);
-	draw_king(2);
-	glTranslatef(2, 0, 0);
-	draw_queen(0);
-	glTranslatef(2, 0, 0);
-	draw_bishop(0);
-	glTranslatef(2, 0, 0);
-	draw_rook(0);
-	glTranslatef(2, 0, 0);
-	draw_knight(0);
-	glTranslatef(2, 0, 0);
-	draw_pawn(0);*/
-
-	glutSwapBuffers();
-	glFlush();
+	//glutSwapBuffers();
+	//glFlush();
+	//
+	//cout << "Player White's turn.\n\n";
+	//Position sourcePosition, destinationPosition;
+	//Piece * pieceSelected = nullptr;
+	//
+	////while (true) {
+	//
+	//	if (board.isInCheck(board.getCurrentPlayer())) {
+	//		if (board.isCheckMate(board.getCurrentPlayer()))
+	//			displayGameOver();
+	//			cout << "CHECK!\n\n";
+	//		}
+	//
+	//	sourcePosition = readSourcePosition();
+	//	if (isValidSource(sourcePosition))
+	//		pieceSelected = board.getPieceAt(sourcePosition);
+	//	else
+	//		glutPostRedisplay();
+	//		//continue;
+	//
+	//	vector<Position> validMoves = pieceSelected->getValidMoves(board, sourcePosition);
+	//	if (validMoves.size() == 0) {
+	//		cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " can't move.\n\n";
+	//		glutPostRedisplay();
+	//		//continue;
+	//	}
+	//	displayValidMoves(validMoves);
+	//
+	//	destinationPosition = readDestinationPosition(validMoves);
+	//	Piece * destinationPiece = board.getPieceAt(destinationPosition);
+	//	board.movePiece(sourcePosition, destinationPosition);
+	//
+	//	if (board.isInCheck(board.getCurrentPlayer())) {
+	//
+	//		board.movePiece(destinationPosition, sourcePosition);
+	//		board.setPieceAt(destinationPosition, destinationPiece);
+	//
+	//		cout << "Moving " << getPieceName(pieceSelected) << " from " << sourcePosition.toString()
+	//			<< " to " << destinationPosition.toString() << " is Invalid." << "\n"
+	//			<< "CHECK not resolved or move leads to CHECK!" << "\n\n";
+	//		glutPostRedisplay();
+	//			//continue;
+	//	}
+	//
+	//	displayBoard();
+	//	GraphicUtils::drawBoard(board);
+	//	switchPlayer();
+		glutSwapBuffers();
+		glFlush();
+	//}
 }
 
 void onWindowReshape(int w, int h) {
-	glViewport(w * 0.25, h * 0.25, w * 0.75, h * 0.75);
-	//glViewport(0, 0, w, h);
+	glViewport(0, 0, h * 3, h);
 	glutPostRedisplay();
 }
 
@@ -271,7 +309,7 @@ int main(int count, char** arguments) {
 	glutFullScreen();
 	glutDisplayFunc(drawGame);
 	glutReshapeFunc(onWindowReshape);
-	glutMainLoop();
 
+	glutMainLoop();
 	return 0;
 }
