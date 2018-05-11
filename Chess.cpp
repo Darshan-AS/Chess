@@ -4,6 +4,8 @@
 #include "Board.h"
 #include <algorithm>
 #include "Chess.h"
+#include <GL/freeglut.h>
+#include "GraphicUtils.h"
 
 string getPieceName(Piece * piece) {
 	string name;
@@ -166,54 +168,110 @@ void displayGameOver() {
 	}
 }
 
-int main() {
-	displayInstructions();
-	displayBoard();
+//int main() {
+//	displayInstructions();
+//	displayBoard();
+//
+//	cout << "Player White's turn.\n\n";
+//	Position sourcePosition, destinationPosition;
+//	Piece * pieceSelected;
+//
+//	while (true) {
+//
+//		if (board.isInCheck(board.getCurrentPlayer())) {
+//			if (board.isCheckMate(board.getCurrentPlayer()))
+//				displayGameOver();
+//			cout << "CHECK!\n\n";
+//		}
+//
+//		sourcePosition = readSourcePosition();
+//		if (isValidSource(sourcePosition))
+//			pieceSelected = board.getPieceAt(sourcePosition);
+//		else
+//			continue;
+//
+//		vector<Position> validMoves = pieceSelected->getValidMoves(board, sourcePosition);
+//		if (validMoves.size() == 0) {
+//			cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " can't move.\n\n";
+//			continue;
+//		}
+//		displayValidMoves(validMoves);
+//
+//		destinationPosition = readDestinationPosition(validMoves);
+//		Piece * destinationPiece = board.getPieceAt(destinationPosition);
+//		board.movePiece(sourcePosition, destinationPosition);
+//
+//		if (board.isInCheck(board.getCurrentPlayer())) {
+//
+//			board.movePiece(destinationPosition, sourcePosition);
+//			board.setPieceAt(destinationPosition, destinationPiece);
+//
+//			cout << "Moving " << getPieceName(pieceSelected) << " from " << sourcePosition.toString()
+//				<< " to " << destinationPosition.toString() << " is Invalid." << "\n"
+//				<< "CHECK not resolved or move leads to CHECK!" << "\n\n";
+//
+//			continue;
+//		}
+//
+//		displayBoard();
+//		switchPlayer();
+//	}
+//
+//	return 0;
+//}
 
-	cout << "Player White's turn.\n\n";
-	Position sourcePosition, destinationPosition;
-	Piece * pieceSelected;
+void setUpGameWindow() {
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutCreateWindow("Chess!");
 
-	while (true) {
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-5, 12, -5, 5, 10, 30);
+	//glOrtho(-2, 9, -2, 9, -2, 10);
+	//glOrtho(-5, 12, -5, 5, 10, 30);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glClearColor(0, 0, 0, 0);
+}
 
-		if (board.isInCheck(board.getCurrentPlayer())) {
-			if (board.isCheckMate(board.getCurrentPlayer()))
-				displayGameOver();
-			cout << "CHECK!\n\n";
-		}
+void drawGame() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	gluLookAt(-13, 15, 3.5, 3.5, 0, 3.5, 0, 1, 0);
+	GraphicUtils::drawBoard(board);
 
-		sourcePosition = readSourcePosition();
-		if (isValidSource(sourcePosition))
-			pieceSelected = board.getPieceAt(sourcePosition);
-		else
-			continue;
+	/*glTranslatef(-8, 0, 0);
+	draw_king(2);
+	glTranslatef(2, 0, 0);
+	draw_queen(0);
+	glTranslatef(2, 0, 0);
+	draw_bishop(0);
+	glTranslatef(2, 0, 0);
+	draw_rook(0);
+	glTranslatef(2, 0, 0);
+	draw_knight(0);
+	glTranslatef(2, 0, 0);
+	draw_pawn(0);*/
 
-		vector<Position> validMoves = pieceSelected->getValidMoves(board, sourcePosition);
-		if (validMoves.size() == 0) {
-			cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " can't move.\n\n";
-			continue;
-		}
-		displayValidMoves(validMoves);
+	glutSwapBuffers();
+	glFlush();
+}
 
-		destinationPosition = readDestinationPosition(validMoves);
-		Piece * destinationPiece = board.getPieceAt(destinationPosition);
-		board.movePiece(sourcePosition, destinationPosition);
+void onWindowReshape(int w, int h) {
+	glViewport(w * 0.25, h * 0.25, w * 0.75, h * 0.75);
+	//glViewport(0, 0, w, h);
+	glutPostRedisplay();
+}
 
-		if (board.isInCheck(board.getCurrentPlayer())) {
+int main(int count, char** arguments) {
+	glutInit(&count, arguments);
 
-			board.movePiece(destinationPosition, sourcePosition);
-			board.setPieceAt(destinationPosition, destinationPiece);
-
-			cout << "Moving " << getPieceName(pieceSelected) << " from " << sourcePosition.toString()
-				<< " to " << destinationPosition.toString() << " is Invalid." << "\n"
-				<< "CHECK not resolved or move leads to CHECK!" << "\n\n";
-
-			continue;
-		}
-
-		displayBoard();
-		switchPlayer();
-	}
+	setUpGameWindow();
+	glutFullScreen();
+	glutDisplayFunc(drawGame);
+	glutReshapeFunc(onWindowReshape);
+	glutMainLoop();
 
 	return 0;
 }
