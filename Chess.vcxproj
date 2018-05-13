@@ -150,15 +150,18 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Chess.h" />
     <ClInclude Include="GraphicUtils.h" />
+    <ClInclude Include="Matrices.h" />
     <ClInclude Include="Pieces.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chess.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="GraphicUtils.cpp" />
+    <ClCompile Include="Matrices.cpp" />
     <ClCompile Include="Pieces.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

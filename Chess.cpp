@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "Chess.h"
 #include <GL/freeglut.h>
+#include "Matrices.h"
+#include <cmath>
 #include "GraphicUtils.h"
 
 string getPieceName(Piece * piece) {
@@ -222,27 +224,35 @@ void displayGameOver() {
 
 void setUpGameWindow() {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowPosition(50, 50);
+	glutInitWindowSize(700, 700);
 	glutCreateWindow("Chess!");
 
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-5, 13, -3, 3, 10, 30);
+	//glFrustum(-5, 12, -3, 3, 10, 30);
+	glFrustum(-5, 5, -5, 5, 10, 30);
 	//glOrtho(-2, 9, -2, 9, -2, 10);
-	//glOrtho(-5, 12, -5, 5, 10, 30);
+	//glOrtho(-5, 5, -5, 5, 10, 30);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glClearColor(0, 0, 0, 0);
 }
 
+
 void drawGame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	gluLookAt(3.5, 10, 16, 3.5, 0, 3.5, 0, 1, 0);
+	//gluLookAt(3.5, 16, 3.5, 3.5, 0, 3.5, 0, 0, -1);
 
 	//displayInstructions();
 	//displayBoard();
+	glPushMatrix();
 	GraphicUtils::drawBoard(board);
+	glPopMatrix();
+
 	//glutSwapBuffers();
 	//glFlush();
 	//
@@ -292,8 +302,8 @@ void drawGame() {
 	//	displayBoard();
 	//	GraphicUtils::drawBoard(board);
 	//	switchPlayer();
-		glutSwapBuffers();
-		glFlush();
+	glutSwapBuffers();
+	glFlush();
 	//}
 }
 
@@ -302,13 +312,78 @@ void onWindowReshape(int w, int h) {
 	glutPostRedisplay();
 }
 
+int clicks = 0;
+void onMouseClick(int button, int state, int x_cursor, int y_cursor) {
+	if (state == GLUT_UP)
+		return;
+
+	clicks++;
+	int width = glutGet(GLUT_WINDOW_WIDTH);
+
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+	// obtain the Z position (not world coordinates but in range 0 - 1)
+	GLfloat z_cursor;
+	glReadPixels(x_cursor, width - y_cursor, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z_cursor);
+
+	// obtain the world coordinates
+	GLdouble x, y, z;
+	gluUnProject(x_cursor, width - y_cursor, z_cursor, modelview, projection, viewport, &x, &y, &z);
+
+	int row = (int) z;
+	int column = (int) x;
+
+	if (z - row >= 0.5)
+		row++;
+
+	if (x - column >= 0.5)
+		column++;
+
+	static int sourceRow, sourceColumn;
+
+	if (clicks % 2 == 1) {
+		sourceRow = row;
+		sourceColumn = column;
+	}
+
+	Position sourcePosition = Position(sourceRow, sourceColumn);
+	if (!board.isInRange(sourcePosition))
+		cout << "Position " << sourcePosition.toString() << " is Invalid." << "\n\n";
+
+	static int  destinatonRow, destinationColumn;
+
+	if (clicks % 2 == 0) {
+		destinatonRow = row;
+		destinationColumn = column;
+	} else {
+		return;
+	}
+
+	Position destinationPosition = Position(destinatonRow, destinationColumn);
+
+	/*for (int i = 0; i < validMoves.size(); i++)
+		if (destinatonRow == validMoves[i].getRow() && destinationColumn == validMoves[i].getColumn())
+			return destinationPosition;
+
+	cout << "Position " << destinationPosition.toString() << " is not a valid destination\n\n";*/
+	
+	Piece * destinationPiece = board.getPieceAt(destinationPosition);
+	board.movePiece(sourcePosition, destinationPosition);
+}
+
 int main(int count, char** arguments) {
 	glutInit(&count, arguments);
 
 	setUpGameWindow();
-	glutFullScreen();
+	//glutFullScreen();
 	glutDisplayFunc(drawGame);
-	glutReshapeFunc(onWindowReshape);
+	glutMouseFunc(onMouseClick);
+	//glutReshapeFunc(onWindowReshape);
 
 	glutMainLoop();
 	return 0;

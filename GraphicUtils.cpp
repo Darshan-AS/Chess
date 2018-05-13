@@ -30,7 +30,6 @@ void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 }
 
 void GraphicUtils::drawBoard(Board board) {
-	//glRotatef(30, 0, 0, 1);
 
 	glPushMatrix();
 	glTranslatef(3.5, -0.05, 3.5);
