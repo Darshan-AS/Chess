@@ -1,6 +1,20 @@
 #include "stdafx.h"
 #include "GraphicUtils.h"
 
+Position GraphicUtils::sourcePosition = Position(-1, -1);
+vector<Position> GraphicUtils::validMoves = vector<Position>();
+
+void GraphicUtils::select(Position source, vector<Position> moves) {
+
+	GraphicUtils::sourcePosition = source;
+	GraphicUtils::validMoves = moves;
+}
+
+void GraphicUtils::deselect() {
+	GraphicUtils::sourcePosition = Position(-1, -1);
+	GraphicUtils::validMoves.clear();
+}
+
 void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 
 	if (piece == nullptr)
@@ -30,9 +44,8 @@ void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 }
 
 void GraphicUtils::drawBoard(Board board) {
-
 	glPushMatrix();
-	glTranslatef(3.5, -0.05, 3.5);
+	glTranslatef(3.5, -0.001, 3.5);
 	glScalef(1, 0.25 / 10, 1);
 	glColor3ub(102, 51, 0);
 	glutSolidCube(10);
@@ -40,18 +53,41 @@ void GraphicUtils::drawBoard(Board board) {
 
 	glPushMatrix();
 	glScalef(1, 0.25, 1);
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
+	for (int row = 0; row < 8; row++) {
+		for (int column = 0; column < 8; column++) {
 			glPushMatrix();
-			if (i % 2 == j % 2)
+			if (row % 2 == column % 2)
 				glColor3f(0.8, 0.8, 0.8);
 			else
 				glColor3f(0.2, 0.2, 0.2);
-			glTranslatef(i, 0, j);
+			glTranslatef(column, 0, row);
 			glutSolidCube(1);
 			glPopMatrix();
 		}
 	}
+
+	cout << sourcePosition.getRow() << " " << sourcePosition.getColumn() << "\n";
+
+	if (!sourcePosition.equals(Position(-1, -1))) {
+		glPushMatrix();
+		glColor3f(1, 0, 0);
+		glTranslatef(GraphicUtils::sourcePosition.getColumn(), 0.1, GraphicUtils::sourcePosition.getRow());
+		glutSolidCube(1);
+		glPopMatrix();
+
+		for (int i = 0; i < validMoves.size(); i++) {
+			glPushMatrix();
+			if (validMoves[i].getRow() % 2 == validMoves[i].getColumn() % 2)
+				glColor3f(0.8, 1, 0.8);
+			else
+				glColor3f(0.2, 0.4, 0.2);
+			glTranslatef(validMoves[i].getColumn(), 0.1, validMoves[i].getRow());
+			glutSolidCube(1);
+			glPopMatrix();
+		}
+	}
+	
+
 	glPopMatrix();
 
 	for (int i = 0; i < Board::MAX_ROWS; i++)

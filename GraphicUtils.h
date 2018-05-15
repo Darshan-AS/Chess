@@ -3,8 +3,13 @@
 
 class GraphicUtils {
 
+	static Position sourcePosition;
+	static vector<Position> validMoves;
+
 public:
 	static void drawBoard(Board board);
+	static void select(Position sourcePosition, vector<Position> validMoves);
+	static void deselect();
 
 private:
 	static void drawPiece(Piece * piece, int x, int z);
