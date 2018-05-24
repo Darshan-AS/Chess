@@ -67,28 +67,54 @@ void displayGameOver() {
 	}
 }
 
-void setUpGameWindow() {
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	//glutInitWindowPosition(440, 0);
-	//glutInitWindowSize(1080, 1080);
-	glutCreateWindow("Chess!");
-
+void init() {
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
+	glEnable(GL_LIGHT3);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-5, 5, -5, 5, 12, 20);
+	glFrustum(-5, 5, -5, 5, 11, 20);
 	//glOrtho(-5, 5, -5, 5, 10, 30);
+	gluLookAt(3.5, 10, 16, 3.5, 0, 3.5, 0, 1, 0);
+	//gluLookAt(0, 0, 20, 0, 0, 0, 0, 1, 0);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glClearColor(0, 0, 0, 0);
 }
 
+void setUpGameWindow() {
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	//glutInitWindowPosition(340, 0);
+	//glutInitWindowSize(1200, 1000);
+	glutCreateWindow("Chess!");
+	glutFullScreen();
+}
+
+void switchLightsOn() {
+
+	glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[4] { 20.0f, 5.0f, 2.0f, 1.0f });
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
+	glLightfv(GL_LIGHT1, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
+
+	glLightfv(GL_LIGHT2, GL_POSITION, new GLfloat[4]{ 3.5f, 1.5f, 3.5f, 1.0f });
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, new GLfloat[4]{ 0.1f, 0.1f, 0.1f, 1.0f });
+	glLightfv(GL_LIGHT2, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
+
+	glLightfv(GL_LIGHT3, GL_POSITION, new GLfloat[4]{ 2.0f, 5.0f, 20.0f, 1.0f });
+	glLightfv(GL_LIGHT3, GL_DIFFUSE, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
+	glLightfv(GL_LIGHT3, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
+}
 
 void drawGame() {
+	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(3.5, 10, 16, 3.5, 0, 3.5, 0, 1, 0);
-	//gluLookAt(3.5, 16, 3.5, 3.5, 0, 3.5, 0, 0, -1);
+
+	switchLightsOn();
 
 	glPushMatrix();
 	GraphicUtils::drawBoard(board);
@@ -103,7 +129,7 @@ void onWindowReshape(int w, int h) {
 	glutPostRedisplay();
 }
 
-void onMouseClick(int button, int state, int x_cursor, int y_cursor) {
+void onMouseClick(int button, int state, int xCursor, int yCursor) {
 	if (state == GLUT_UP)
 		return;
 
@@ -123,14 +149,12 @@ void onMouseClick(int button, int state, int x_cursor, int y_cursor) {
 
 	// obtain the Z position (not world coordinates but in range 0 - 1)
 	GLfloat z_cursor;
-	glReadPixels(x_cursor, height - y_cursor, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z_cursor);
+	glReadPixels(xCursor, height - yCursor, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z_cursor);
 
 	// obtain the world coordinates
 	GLdouble x, y, z;
-	gluUnProject((double) x_cursor, (double) height - y_cursor, (double) z_cursor, modelview, projection, viewport, &x, &y, &z);
-	//x += 0.05;
-	//z += 0.15;
-	cout << z << " " << x << "\n";
+	gluUnProject((double) xCursor, (double) height - yCursor, (double) z_cursor, modelview, projection, viewport, &x, &y, &z);
+
 
 	int row = (int) z;
 	int column = (int) x;
@@ -212,13 +236,47 @@ void onMouseClick(int button, int state, int x_cursor, int y_cursor) {
 	}
 }
 
+void onKeyPressed(unsigned char key, int xCursor, int yCursor) {
+	
+	switch (key) {
+
+	case '1':
+		if (glIsEnabled(GL_LIGHT1))
+			glDisable(GL_LIGHT1);
+		else
+			glEnable(GL_LIGHT1);
+		break;
+
+	case '2':
+		if (glIsEnabled(GL_LIGHT2))
+			glDisable(GL_LIGHT2);
+		else
+			glEnable(GL_LIGHT2);
+		break;
+
+	case '3':
+		if (glIsEnabled(GL_LIGHT3))
+			glDisable(GL_LIGHT3);
+		else
+			glEnable(GL_LIGHT3);
+		break;
+
+	default:
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
 int main(int count, char** arguments) {
 	glutInit(&count, arguments);
 
 	setUpGameWindow();
-	glutFullScreen();
+	init();
+
 	glutDisplayFunc(drawGame);
 	glutMouseFunc(onMouseClick);
+	glutKeyboardFunc(onKeyPressed);
 	glutReshapeFunc(onWindowReshape);
 
 	glutMainLoop();
