@@ -4,13 +4,12 @@
 Position GraphicUtils::sourcePosition = Position(-1, -1);
 vector<Position> GraphicUtils::validMoves = vector<Position>();
 
-void GraphicUtils::select(Position source, vector<Position> moves) {
-
+void GraphicUtils::selectPieceAt(Position source, vector<Position> moves) {
 	GraphicUtils::sourcePosition = source;
 	GraphicUtils::validMoves = moves;
 }
 
-void GraphicUtils::deselect() {
+void GraphicUtils::deselectPieceAt() {
 	GraphicUtils::sourcePosition = Position(-1, -1);
 	GraphicUtils::validMoves.clear();
 }
@@ -31,22 +30,23 @@ void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
 	glMaterialfv(GL_FRONT, GL_SHININESS, new GLfloat[4]{ 100.0f });
 
-	if (dynamic_cast<Pawn*>(piece))
+	if (dynamic_cast<Pawn * > (piece))
 		drawPawn(x, 0, z, color);
-	else if (dynamic_cast<Knight*>(piece))
+	else if (dynamic_cast<Knight * > (piece))
 		drawKnight(x, 0, z, color);
-	else if (dynamic_cast<Bishop*>(piece))
+	else if (dynamic_cast<Bishop * > (piece))
 		drawBishop(x, 0, z, color);
-	else if (dynamic_cast<Rook*>(piece))
+	else if (dynamic_cast<Rook * > (piece))
 		drawRook(x, 0, z, color);
-	else if (dynamic_cast<Queen*>(piece))
+	else if (dynamic_cast<Queen * > (piece))
 		drawQueen(x, 0, z, color);
-	if (dynamic_cast<King*>(piece))
+	if (dynamic_cast<King * > (piece))
 		drawKing(x, 0, z, color);
 
 }
 
 void GraphicUtils::drawBoard(Board board) {
+	// Wooden base
 	glPushMatrix();
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.5f, 0.25f, 0.0f, 1.0f });
 	glTranslatef(3.5, -0.001, 3.5);
@@ -54,6 +54,7 @@ void GraphicUtils::drawBoard(Board board) {
 	glutSolidCube(10);
 	glPopMatrix();
 
+	// Light Bubble
 	glPushMatrix();
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.5f, 0.5f, 0.5f, 1.0f });
 	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
@@ -76,6 +77,7 @@ void GraphicUtils::drawBoard(Board board) {
 	glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.0f, 0.0f, 0.0f, 1.0f });
 	glPopMatrix();
 
+	// Black and White Board
 	glPushMatrix();
 	glScalef(1, 0.25, 1);
 	for (int row = 0; row < 8; row++) {
@@ -91,6 +93,7 @@ void GraphicUtils::drawBoard(Board board) {
 		}
 	}
 
+	// Valid moves indication
 	if (!sourcePosition.equals(Position(-1, -1))) {
 		glPushMatrix();
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 1.0f, 0.0f, 0.0f, 1.0f });
@@ -110,9 +113,9 @@ void GraphicUtils::drawBoard(Board board) {
 		}
 	}
 	
-
 	glPopMatrix();
 
+	// Draw all pieces
 	for (int i = 0; i < Board::MAX_ROWS; i++)
 		for (int j = 0; j < Board::MAX_COLUMNS; j++)
 			drawPiece(board.getPieceAt(Position(i, j)), i , j);
@@ -137,7 +140,6 @@ struct Points {
 	GLfloat x1, x2, x3, x4;
 	GLfloat z1, z2, z3, z4;
 	GLfloat y1, y2, y3, y4;
-	//ChessPiece *who;
 };
 
 void GraphicUtils::drawSmoothUnityEllipsoidPatch(float a1, float a2, float b1, float b2)
@@ -185,6 +187,7 @@ void GraphicUtils::drawBottom() {
 	glScalef(1.5, 1.5, 0.8);
 	drawSmoothUnityEllipsoidPatch(0, 2 * 3.14, 0, 3.14 / 2);
 	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(0.0f, 0.9f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -195,12 +198,12 @@ void GraphicUtils::drawBottom() {
 
 void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glMatrixMode(GL_MODELVIEW);
+	
 	glPushMatrix();
-
 	glTranslatef(x, 0, z);
 	glScalef(0.33f, 0.33f, 0.33f);
 
-	// upper sphere
+	// Top sphere
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
 	glRotatef(-90, 1.0f, 0.0f, 0.0f);
@@ -208,6 +211,7 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.5f, 0.2f, 40, 40);
 	glPopMatrix();
 
+	// Top cross
 	glPushMatrix();
 	glTranslatef(0.0f, 5.9f, 0.0f);
 	glutSolidSphere(0.34f, 50, 50);
@@ -220,7 +224,7 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCube(1.0f);
 	glPopMatrix();
 
-	// upper ellipse ring
+	// Middle rings
 	glPushMatrix();
 	glTranslatef(0.0f, 4.10f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -242,7 +246,7 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
-	//  cone
+	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
 	glRotatef(-90, 1.0f, 0.0f, 0.0f);
@@ -252,22 +256,22 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCone(0.7f, 5.6f, 50, 50);
 	glPopMatrix();
 
-	// bottom circle
+	// Bottom circles
 	glPushMatrix();
-	glTranslatef(0.0f, 1.3f, 0.0f);
+	glTranslatef(0.0f, 1.5f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
+	glTranslatef(0.0f, 1.7f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(0.8f, 0.3f, 50, 50);
 	glPopMatrix();
 
-	// bottom Ellipsoid
+	// Bottom ellipsoid
 	drawBottom();
 
 	glPopMatrix();
@@ -280,14 +284,14 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glTranslatef(x, 0, z);
 	glScalef(0.33f, 0.34f, 0.33f);
 
-	//upper sphere
+	// Upper sphere
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
 	glScalef(0.4, 0.4, 0.4);
 	glutSolidSphere(1, 50, 50);
 	glPopMatrix();
 
-	//upper extrusion
+	// Upper extrusion
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
 	glScalef(0.45, 0.1, 0.45);
@@ -296,7 +300,7 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidDodecahedron();
 	glPopMatrix();
 
-	// upper ellipse rings
+	// Middle rings
 	glPushMatrix();
 	glTranslatef(0.0f, 4.10f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -318,7 +322,7 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
-	//  cone
+	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -328,41 +332,41 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCone(0.7f, 5.6f, 50, 50);
 	glPopMatrix();
 
-	// bottom circle
+	// Bottom circles
 	glPushMatrix();
-	glTranslatef(0.0f, 1.3f, 0.0f);
+	glTranslatef(0.0f, 1.5f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
+	glTranslatef(0.0f, 1.7f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(0.8f, 0.3f, 50, 50);
 	glPopMatrix();
 
-	// bottom Ellipsoid
+	// Bottom ellipsoid
 	drawBottom();
 
 	glPopMatrix();
 }
 
 void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
-
 	glMatrixMode(GL_MODELVIEW);
+
 	glPushMatrix();
 	glTranslatef(x, 0, z);
 	glScalef(0.34f, 0.31f, 0.34f);
 
-	// upper sphere
+	// Upper sphere
 	glPushMatrix();
 	glTranslatef(0.0f, 5.5f, 0.0f);
 	glutSolidSphere(.2f, 40, 40);
 	glPopMatrix();
 
-	// upper ellipse ring
+	// Upper rings
 	glPushMatrix();
 	glTranslatef(0.0f, 3.10f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -384,7 +388,7 @@ void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
-	//  cone
+	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -398,7 +402,7 @@ void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidSphere(1, 40, 40);
 	glPopMatrix();
 
-	// middle ring
+	// Middle ring
 	glPushMatrix();
 	glTranslatef(0.0f, 3.71f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -406,22 +410,24 @@ void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.45f, 0.2f, 40, 40);
 	glPopMatrix();
 
-	// bottom circle
-	glPushMatrix();
-	glTranslatef(0.0f, 1.3f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.85f, 0.3f, 50, 50);
-	glPopMatrix();
-
+	// Bottom circles
 	glPushMatrix();
 	glTranslatef(0.0f, 1.5f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.7f, 0.3f, 50, 50);
+	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	glPushMatrix();
+	glTranslatef(0.0f, 1.7f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(0.8f, 0.3f, 50, 50);
+	glPopMatrix();
+
+	//Bottom ellipsoid
 	drawBottom();
+
 	glPopMatrix();
 }
 
@@ -433,7 +439,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glScalef(0.29f, 0.30f, 0.29f);
 	GLUquadricObj * quadratic;
 
-	// topmost cylendar
+	// Top cylinder
 	glPushMatrix();
 	glTranslatef(0.0, 4.0, 0.0);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -442,7 +448,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.9f, 0.1f, 50, 50);
 	glPopMatrix();
 
-	// top covering
+	// Top covering
 	glPushMatrix();
 	glTranslatef(0.0, 5.0, 0.0);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -450,7 +456,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.9f, 0.1f, 50, 50);
 	glPopMatrix();
 
-	// middle cylendar
+	// Body cylinders
 	glPushMatrix();
 	glTranslatef(0.0, 1.0, 0.0);
 	quadratic = gluNewQuadric();
@@ -458,7 +464,6 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	gluCylinder(quadratic, 1.1f, 0.6f, 3.4f, 32, 32);
 	glPopMatrix();
 
-	// inverted cylendar
 	glPushMatrix();
 	glTranslatef(0.0, 4.5, 0.0);
 	quadratic = gluNewQuadric();
@@ -466,7 +471,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	gluCylinder(quadratic, 0.85f, 0.55f, 3.4f, 32, 32);
 	glPopMatrix();
 
-	// middle covering
+	// Middle Covering
 	glPushMatrix();
 	glTranslatef(0.0, 3.4, 0.0);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
@@ -474,182 +479,81 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.455f, 0.3f, 50, 50);
 	glPopMatrix();
 
-	// bottom Ellipsoid
+	// Bottom circles
+	glPushMatrix();
+	glTranslatef(0.0f, 1.5f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(1.0f, 0.3f, 50, 50);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, 1.7f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(0.8f, 0.3f, 50, 50);
+	glPopMatrix();
+
+	// Bottom ellipsoid
 	drawBottom();
+
 	glPopMatrix();
 }
 
 void GraphicUtils::drawKnight(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glMatrixMode(GL_MODELVIEW);
+	GLUquadricObj * quadratic;
 
 	glPushMatrix();
 	glTranslatef(x, 0, z);
-	glRotatef(180, 0.0f, 1.0f, 0.0f);
+	if (color == Piece::COLOR_WHITE)
+		glRotatef(90, 0.0f, 1.0f, 0.0f);
+	else if (color == Piece::COLOR_BLACK)
+		glRotatef(-90, 0.0f, 1.0f, 0.0f);
 	glScalef(0.29f, 0.29f, 0.29f);
 
+	// Body cylinder
 	glPushMatrix();
-	glTranslatef(0.0f, 4.0f, 0.0f);
-	// uff1
-	GLfloat tm12 = 0.8f;
-	glTranslatef(0, -0.05f, 0);
-	glTranslatef(-0.2f, 0.0f, 0.0f);
-
-	glPushMatrix();
-	glScalef(0.8, 0.9, 0.8);
-	glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(-0.8f, -2.5f, -tm12);
-	glVertex3f(0.8f, -2.5f, -tm12);
-	glVertex3f(0.4f, -1.2f, -tm12);
-	glVertex3f(-0.4f, -0.5f, -tm12);
-	glEnd();
-
-	// back face /
-	glBegin(GL_QUADS);
-	glNormal3f(-1.0f, 0.2f, 0.0f);
-	glVertex3f(-0.8f, -2.5f, -tm12);
-	glVertex3f(-0.8f, -2.5f, tm12);
-	glVertex3f(-0.4f, -0.5f, tm12);
-	glVertex3f(-0.4f, -0.5f, -tm12);
-	glEnd();
-
-	// front face
-	glBegin(GL_QUADS);
-	glNormal3f(1.0f, 0.2f, 0.0f);
-	glVertex3f(0.8f, -2.5f, -tm12);
-	glVertex3f(0.8f, -2.5f, tm12);
-	glVertex3f(0.2f, -0.5f, tm12);
-	glVertex3f(0.2f, -0.5f, -tm12);
-	glEnd();
-
-	tm12 = -0.8f;
-
-	glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.8f, -2.5f, -tm12);
-	glVertex3f(0.8f, -2.5f, -tm12);
-	glVertex3f(0.4f, -1.2f, -tm12);
-	glVertex3f(-0.4f, -0.5f, -tm12);
-	glEnd();
-
-	tm12 = .8f;
-
-	glBegin(GL_QUADS);
-	glNormal3f(-1.0f, 0.5f, 0.0f);
-	glVertex3f(-0.4f, -0.5f, -tm12);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(-0.4f, -0.5f, tm12);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glNormal3f(1.0f, -0.4f, 0.0f);
-	glVertex3f(0.4f, -1.2f, -tm12);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(0.4f, -1.2f, tm12);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glVertex3f(0.4f, -1.2f, -tm12);
-	glVertex3f(-0.4f, -0.5f, -tm12);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glEnd();
-
-	glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(0.4f, -1.2f, tm12);
-	glVertex3f(-0.4f, -0.5f, tm12);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glEnd();
-	// kte1
-	glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(0.4f, -1.2f, tm12);
-	glVertex3f(-0.4f, -0.5f, tm12);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glEnd();
-
-	// muh
-	glPushMatrix();
-	//top m
-	glBegin(GL_QUADS);
-	glNormal3f(0.3f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glVertex3f(2.6f, 0.8f, -tm12 + 0.5f);
-	glVertex3f(2.6f, 0.8f, tm12 - 0.5f);
-	glEnd();
-	//bot m
-	glBegin(GL_QUADS);
-	glNormal3f(-0.2f, -1.0f, 0.0f);
-	glVertex3f(0.5f, -0.2f, tm12);
-	glVertex3f(0.5f, -0.2f, -tm12);
-	glVertex3f(2.6f, 0.4f, -tm12 + 0.5f);
-	glVertex3f(2.6f, 0.4f, tm12 - 0.5f);
-	glEnd();
-
-	// left m
-	glBegin(GL_QUADS);
-	glNormal3f(0.2f, 0.0f, -1.0f);
-	glVertex3f(0.5f, -0.2f, -tm12);
-	glVertex3f(1.0f, 1.4f, -tm12);
-	glVertex3f(2.6f, 0.8f, -tm12 + 0.5f);
-	glVertex3f(2.6f, 0.4f, -tm12 + 0.5f);
-	glEnd();
-	// right m
-	glBegin(GL_QUADS);
-	glNormal3f(0.2f, 0.0f, 1.0f);
-	glVertex3f(0.5f, -0.2f, tm12);
-	glVertex3f(1.0f, 1.4f, tm12);
-	glVertex3f(2.6f, 0.8f, tm12 - 0.5f);
-	glVertex3f(2.6f, 0.4f, tm12 - 0.5f);
-	glEnd();
-
-	// front dakhan
-	glBegin(GL_QUADS);
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(2.6f, 0.4f, -tm12 + 0.5f);
-	glVertex3f(2.6f, 0.8f, -tm12 + 0.5f);
-	glVertex3f(2.6f, 0.4f, tm12 - 0.5f);
-	glVertex3f(2.6f, 0.8f, tm12 - 0.5f);
-	glEnd();
-	glPopMatrix();
-	glPopMatrix();
+	glTranslatef(0.0, 1.0, 0.0);
+	glScalef(1.0f, 1.0f, 0.8f);
+	quadratic = gluNewQuadric();
+	glRotatef(15.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	gluCylinder(quadratic, 1.1f, 0.6f, 3.4f, 32, 32);
 	glPopMatrix();
 
-	// bottom Ellipsoid
-	// bottom circle
+	// Face
 	glPushMatrix();
-	glTranslatef(0.0f, 1.6f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(0.86, 0.86, 0.25);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
+	quadratic = gluNewQuadric();
+	glTranslatef(-1.0f, 4.4f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.6f);
+	glRotatef(-10, 0.0f, 0.0f, 1.0f);
+	glRotatef(90, 0.0f, 1.0f, 0.0f);
+	gluCylinder(quadratic, 0.8f, 0.5f, 2.0f, 32, 32);
+	glTranslatef(0.0f, 0.0f, 0.2f);
+	glutSolidTorus(0.65f, 0.2f, 40, 40);
+	glTranslatef(0.0f, 0.0f, 1.7f);
+	glutSolidTorus(0.4f, 0.1f, 40, 40);
 	glPopMatrix();
+
+	// Bottom circles
 	glPushMatrix();
 	glTranslatef(0.0f, 1.5f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(0.0f, 1.3f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
+
 	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
+	glTranslatef(0.0f, 1.7f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(0.8f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom ellipsoid
 	drawBottom();
+
 	glPopMatrix();
 }
 
@@ -660,7 +564,7 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glTranslatef(x, 0, z);
 	glScalef(0.29 / 1.0f, 0.3 / 1.0f, 0.29 / 1.0f);
 
-	// upper sphere
+	// Upper sphere
 	GLfloat Pawn_upper_sphere = 4.0f;
 	GLfloat Pawn_upper_spherex = 0.0f, Pawn_upper_ring = 3.30f;
 	glPushMatrix();
@@ -668,7 +572,7 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidSphere(0.7f, 50, 50);
 	glPopMatrix();
 
-	// upper ellipse ring
+	// Upper rings
 	glPushMatrix();
 	glTranslatef(0, Pawn_upper_ring, -Pawn_upper_spherex);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
@@ -678,154 +582,30 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glPopMatrix();
 	glPopMatrix();
 
-	//  cone
+	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glutSolidCone(1.0f, 3.4f, 50, 50);
 	glPopMatrix();
 
-	// bottom circle
+	// Bottom circles
 	glPushMatrix();
-	glTranslatef(0.0f, 1.3f, 0.0f);
+	glTranslatef(0.0f, 1.5f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.2);
 	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
-
-	// bottom Ellipsoid
-	drawBottom();
+	glPushMatrix();
+	glTranslatef(0.0f, 1.7f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(0.8f, 0.3f, 50, 50);
 	glPopMatrix();
-}
 
-void GraphicUtils::drawQuad(float x, float y, float z, float r) {
+	// Bottom ellipsoid
+	drawBottom();
 
-	// glPushMatrix();
-
-	glBegin(GL_QUADS);
-	// glTranslatef(x, y, z);
-	//   glColor3f(1.0f, 1.0f, 1.0f);
-
-	// front
-	// glNormal3f(0.0f, 0.0f, 1.0f);
-	glNormal3f(0.0f, -1.0f, 1.0f);
-	glVertex3f(x - 0.5f, y - 0.2f, z + 0.5f);
-	glNormal3f(0.0f, 1.0f, 1.0f);
-	glVertex3f(x - 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(0.0f, 1.0f, 1.0f);
-	glVertex3f(x + 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(0.0f, -1.0f, 1.0f);
-	glVertex3f(x + 0.5f, y - 0.2f, z + 0.5f);
-	//  glColor3f(0.0f, 1.0f, 1.0f);
-	// right
-	//    glNormal3f(1.0f, 0.0f, 0.0f);
-	glNormal3f(1.0f, -1.0f, 0.0f);
-	glVertex3f(x + 0.5f, y - 0.2f, z - 0.5f);
-	glNormal3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(x + 0.5f, y + 0.2f, z - 0.5f);
-	glNormal3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(x + 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(1.0f, -1.0f, 0.0f);
-	glVertex3f(x + 0.5f, y - 0.2f, z + 0.5f);
-	// glColor3f(1.0f, 0.0f, 1.0f);
-
-	// left
-	//    glNormal3f(-1.0f, 0.0f, 0.0f);
-	glNormal3f(-1.0f, -1.0f, 0.0f);
-	glVertex3f(x - 0.5f, y - 0.2f, z - 0.5f);
-	glNormal3f(-1.0f, -1.0f, 0.0f);
-	glVertex3f(x - 0.5f, y - 0.2f, z + 0.5f);
-	glNormal3f(-1.0f, 1.0f, 0.0f);
-	glVertex3f(x - 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(-1.0f, 1.0f, 0.0f);
-	glVertex3f(x - 0.5f, y + 0.2f, z - 0.5f);
-
-	//  glColor3f(1.0f, 1.0f, 0.0f);
-
-	// back
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(x - 0.5f, y - 0.2f, z - 0.5f);
-	glVertex3f(x - 0.5f, y + 0.2f, z - 0.5f);
-	glVertex3f(x + 0.5f, y + 0.2f, z - 0.5f);
-	glVertex3f(x + 0.5f, y - 0.2f, z - 0.5f);
-
-	//glColor3f(1.0f, 0.0f, 0.0f);
-
-	// top
-	//    glNormal3f(0.0f, 0.0f, -1.0f);
-	glNormal3f(0.0f, -1.0f, -1.0f);
-	glVertex3f(x - 0.5f, y + 0.2f, z - 0.5f);
-	glNormal3f(-0.0f, 1.0f, -1.0f);
-	glVertex3f(x - 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(0.0f, 1.0f, -1.0f);
-	glVertex3f(x + 0.5f, y + 0.2f, z + 0.5f);
-	glNormal3f(0.0f, 1.0f, -1.0f);
-	glVertex3f(x + 0.5f, y + 0.2f, z - 0.5f);
-
-	Points block[112];
-	int counter_block = 1;
-
-	if (counter_block <= 64) {
-		int flg = 0;
-		//if(counter_block==0)    { flg=1;counter_block=37;}
-		if (counter_block == 0) {
-			int counter_block1 = 37;
-			block[counter_block1].x1 = x - 0.5f; block[counter_block1].x2 = x - 0.5f;
-			block[counter_block1].x3 = x + 0.5f; block[counter_block1].x4 = x + 0.5f;
-			block[counter_block1].z1 = z - 0.5f; block[counter_block1].z2 = z + 0.5f;
-			block[counter_block1].z3 = z + 0.5f; block[counter_block1].z4 = z - 0.5f;
-			block[counter_block1].y1 = y + 0.2f; block[counter_block1].y2 = y + 0.2f;
-			block[counter_block1].y3 = y + 0.2f; block[counter_block1].y4 = y + 0.2f;
-		} else {
-			block[counter_block].x1 = x - 0.5f; block[counter_block].x2 = x - 0.5f;
-			block[counter_block].x3 = x + 0.5f; block[counter_block].x4 = x + 0.5f;
-			block[counter_block].z1 = z - 0.5f; block[counter_block].z2 = z + 0.5f;
-			block[counter_block].z3 = z + 0.5f; block[counter_block].z4 = z - 0.5f;
-			block[counter_block].y1 = y + 0.2f; block[counter_block].y2 = y + 0.2f;
-			block[counter_block].y3 = y + 0.2f; block[counter_block].y4 = y + 0.2f;
-		}
-		//if(flg==1)  counter_block=0;
-
-		counter_block++;
-	}
-	// dead posi
-
-	//  glColor3f(0.7f, 0.7f, 0.8f);
-	// bottom
-
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(x - 0.5f, y - 0.2f, z - 0.5f);
-	glVertex3f(x - 0.5f, y - 0.2f, z + 0.5f);
-	glVertex3f(x + 0.5f, y - 0.2f, z + 0.5f);
-	glVertex3f(x + 0.5f, y - 0.2f, z - 0.5f);
-	{
-		GLfloat x = -4.0f, y = -5.0f, z = -5.0f;
-
-		for (int counter_block1 = 71; counter_block1<90; counter_block1++) {
-			if (counter_block1 == 78) { z = z - 0.7f; x = -4.0f; }
-			block[counter_block1].x1 = x - 0.5f; block[counter_block1].x2 = x - 0.5f;
-			block[counter_block1].x3 = x + 0.5f; block[counter_block1].x4 = x + 0.5f;
-			block[counter_block1].z1 = z - 0.5f; block[counter_block1].z2 = z + 0.5f;
-			block[counter_block1].z3 = z + 0.5f; block[counter_block1].z4 = z - 0.5f;
-			block[counter_block1].y1 = y + 0.2f; block[counter_block1].y2 = y + 0.2f;
-			block[counter_block1].y3 = y + 0.2f; block[counter_block1].y4 = y + 0.2f;
-			x = x + 0.7f;// y=y+1.0f;
-		}
-
-		x = 3.0f; y = -5.0f; z = 4.0f;
-
-		for (int counter_block1 = 91; counter_block1<110; counter_block1++) {
-			if (counter_block1 == 98) { z = z + 0.7f; x = 3.0f; }
-			block[counter_block1].x1 = x - 0.5f; block[counter_block1].x2 = x - 0.5f;
-			block[counter_block1].x3 = x + 0.5f; block[counter_block1].x4 = x + 0.5f;
-			block[counter_block1].z1 = z - 0.5f; block[counter_block1].z2 = z + 0.5f;
-			block[counter_block1].z3 = z + 0.5f; block[counter_block1].z4 = z - 0.5f;
-			block[counter_block1].y1 = y + 0.2f; block[counter_block1].y2 = y + 0.2f;
-			block[counter_block1].y3 = y + 0.2f; block[counter_block1].y4 = y + 0.2f;
-			x = x - 0.7f;// y=y+1.0f;
-		}
-	}
-	glEnd();
-
+	glPopMatrix();
 }

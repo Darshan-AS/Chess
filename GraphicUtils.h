@@ -8,8 +8,8 @@ class GraphicUtils {
 
 public:
 	static void drawBoard(Board board);
-	static void select(Position sourcePosition, vector<Position> validMoves);
-	static void deselect();
+	static void selectPieceAt(Position sourcePosition, vector<Position> validMoves);
+	static void deselectPieceAt();
 
 private:
 	static void drawPiece(Piece * piece, int x, int z);
@@ -21,7 +21,6 @@ private:
 	static void drawRook(GLfloat x, GLfloat y, GLfloat z, int color);
 
 	static void drawSmoothUnityEllipsoidPatch(float a1, float a2, float b1, float b2);
-	static void drawQuad(float x, float y, float z, float r);
 	static void drawBottom();
 };
 
