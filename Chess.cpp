@@ -8,6 +8,7 @@
 #include "Matrices.h"
 #include <cmath>
 #include "GraphicUtils.h"
+#include <windows.h>
 
 bool isValidSource(Position sourcePosition) {
 	Piece * pieceSelected = board.getPieceAt(sourcePosition);
@@ -30,14 +31,12 @@ void switchPlayer() {
 
 	switch (board.getCurrentPlayer()) {
 
-	case Piece::COLOR_WHITE:
-		board.setCurrentPlayer(Piece::COLOR_BLACK);
-		cout << "Player Black's turn\n\n";
+	case Board::PLAYER_WHITE:
+		board.setCurrentPlayer(Board::PLAYER_BLACK);
 		break;
 
-	case Piece::COLOR_BLACK:
-		board.setCurrentPlayer(Piece::COLOR_WHITE);
-		cout << "Player White's turn\n\n";
+	case Board::PLAYER_BLACK:
+		board.setCurrentPlayer(Board::PLAYER_WHITE);
 		break;
 	}
 }
@@ -80,7 +79,7 @@ void init() {
 	glFrustum(-5, 5, -5, 5, 11, 20);
 	//glOrtho(-5, 5, -5, 5, 10, 30);
 	gluLookAt(3.5, 10, 16, 3.5, 0, 3.5, 0, 1, 0);
-	//gluLookAt(0, 0, 20, 0, 0, 0, 0, 1, 0);
+	//gluLookAt(3.5, 0, 20, 3.5, 0, 3.5, 0, 1, 0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

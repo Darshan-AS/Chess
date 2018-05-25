@@ -48,10 +48,32 @@ void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
 
 void GraphicUtils::drawBoard(Board board) {
 	glPushMatrix();
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.5f, 0.25f, 0.0f, 1.0f });
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.5f, 0.25f, 0.0f, 1.0f });
 	glTranslatef(3.5, -0.001, 3.5);
 	glScalef(1, 0.25 / 10, 1);
 	glutSolidCube(10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.5f, 0.5f, 0.5f, 1.0f });
+	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
+	glMaterialfv(GL_FRONT, GL_SHININESS, new GLfloat[4]{ 100.0f });
+	
+	if (board.getCurrentPlayer() == Board::PLAYER_WHITE)
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.5f, 0.2f, 1.0f });
+	else
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.3f, 0.32f, 0.3f, 1.0f });
+	glTranslatef(3.5, 0.25 / 2, 8);
+	glutSolidSphere(0.25, 50, 50);
+
+	if (board.getCurrentPlayer() == Board::PLAYER_BLACK)
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.5f, 0.2f, 1.0f });
+	else
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.3f, 0.32f, 0.3f, 1.0f });
+	glTranslatef(0, 0, -9);
+	glutSolidSphere(0.25, 50, 50);
+
+	glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.0f, 0.0f, 0.0f, 1.0f });
 	glPopMatrix();
 
 	glPushMatrix();
@@ -60,9 +82,9 @@ void GraphicUtils::drawBoard(Board board) {
 		for (int column = 0; column < 8; column++) {
 			glPushMatrix();
 			if (row % 2 == column % 2)
-				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.8f, 0.8f, 0.8f, 1.0f });
+				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.8f, 0.8f, 0.8f, 1.0f });
 			else
-				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.3f, 0.3f, 0.3f, 1.0f });
+				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.3f, 0.3f, 0.3f, 1.0f });
 			glTranslatef(column, 0, row);
 			glutSolidCube(1);
 			glPopMatrix();
@@ -71,7 +93,7 @@ void GraphicUtils::drawBoard(Board board) {
 
 	if (!sourcePosition.equals(Position(-1, -1))) {
 		glPushMatrix();
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 1.0f, 0.0f, 0.0f, 1.0f });
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 1.0f, 0.0f, 0.0f, 1.0f });
 		glTranslatef(GraphicUtils::sourcePosition.getColumn(), 0.01, GraphicUtils::sourcePosition.getRow());
 		glutSolidCube(1);
 		glPopMatrix();
@@ -79,9 +101,9 @@ void GraphicUtils::drawBoard(Board board) {
 		for (int i = 0; i < validMoves.size(); i++) {
 			glPushMatrix();
 			if (validMoves[i].getRow() % 2 == validMoves[i].getColumn() % 2)
-				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.8f, 1.0f, 0.8f, 1.0f });
+				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.8f, 1.0f, 0.8f, 1.0f });
 			else
-				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.2f, 0.4f, 0.2f, 1.0f });
+				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.2f, 0.5f, 0.2f, 1.0f });
 			glTranslatef(validMoves[i].getColumn(), 0.01, validMoves[i].getRow());
 			glutSolidCube(1);
 			glPopMatrix();
