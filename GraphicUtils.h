@@ -10,9 +10,10 @@ public:
 	static void drawBoard(Board board);
 	static void selectPieceAt(Position sourcePosition, vector<Position> validMoves);
 	static void deselectPieceAt();
-
+	
 private:
 	static void drawPiece(Piece * piece, int x, int z);
+
 	static void drawKing(GLfloat x, GLfloat y, GLfloat z, int color);
 	static void drawQueen(GLfloat x, GLfloat y, GLfloat z, int color);
 	static void drawKnight(GLfloat x, GLfloat y, GLfloat z, int color);

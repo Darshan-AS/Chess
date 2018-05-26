@@ -8,22 +8,14 @@
 #include "Matrices.h"
 #include <cmath>
 #include "GraphicUtils.h"
-#include <windows.h>
 
 bool isValidSource(Position sourcePosition) {
 	Piece * pieceSelected = board.getPieceAt(sourcePosition);
 
-	if (!board.containsPieceAt(sourcePosition)) {
-
-		//cout << "No Piece found at " << sourcePosition.toString() << "\n\n";
+	if (!board.containsPieceAt(sourcePosition) ||
+		!pieceSelected->belongsTo(board.getCurrentPlayer()))
 		return false;
-
-	} else if (!pieceSelected->belongsTo(board.getCurrentPlayer())) {
-
-		//cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " belongs to the opponent.\n\n";
-		return false;
-	}
-
+	
 	return true;
 }
 
@@ -123,6 +115,12 @@ void drawGame() {
 	glFlush();
 }
 
+void showGameOver() {
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
+	glDisable(GL_LIGHT3);
+}
+
 void onWindowReshape(int w, int h) {
 	glViewport(w/2 - h/2, 0, h , h);
 	glutPostRedisplay();
@@ -146,11 +144,11 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
-	// obtain the Z position (not world coordinates but in range 0 - 1)
+	// Obtain the Z position (not world coordinates but in range 0 - 1)
 	GLfloat z_cursor;
 	glReadPixels(xCursor, height - yCursor, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z_cursor);
 
-	// obtain the world coordinates
+	// Obtain the world coordinates
 	GLdouble x, y, z;
 	gluUnProject((double) xCursor, (double) height - yCursor, (double) z_cursor, modelview, projection, viewport, &x, &y, &z);
 
@@ -164,43 +162,33 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 	if (x - column >= 0.5)
 		column++;
 
-	cout << row << " " << column << "\n";
-
 	static Position sourcePosition, destinationPosition;
 	static Piece * pieceSelected;
 	static vector<Position> validMoves;
 
 	if (input == SOURCE_POSITION) {
-		if (board.isInCheck(board.getCurrentPlayer())) {
-			if (board.isCheckMate(board.getCurrentPlayer()))
-				displayGameOver();
-			cout << "CHECK!\n\n";
+		if (board.isCheckMate(board.getCurrentPlayer())) {
+			displayGameOver();
 		}
 
 		sourcePosition = Position(row, column);
-		if (!board.isInRange(sourcePosition) || !isValidSource(sourcePosition)) {
-			cout << "Position " << sourcePosition.toString() << " is Invalid." << "\n\n";
+		if (!board.isInRange(sourcePosition) || !isValidSource(sourcePosition))
 			return;
-		}
 		
 		pieceSelected = board.getPieceAt(sourcePosition);
 		validMoves = pieceSelected->getValidMoves(board, sourcePosition);
-		GraphicUtils::select(sourcePosition, validMoves);
+		GraphicUtils::selectPieceAt(sourcePosition, validMoves);
 
-		if (validMoves.size() == 0) {
-			//cout << "The " << getPieceName(pieceSelected) << " at " << sourcePosition.toString() << " can't move.\n\n";
+		if (validMoves.size() == 0)
 			return;
-		}
 		
 		input = DESTINATION_POSITION;
 
 	} else if (input == DESTINATION_POSITION) {
 		
 		destinationPosition = Position(row, column);
-		if (!board.isInRange(sourcePosition)) {
-			cout << "Position " << destinationPosition.toString() << " is Invalid." << "\n\n";
+		if (!board.isInRange(sourcePosition))
 			return;
-		}
 
 		bool isValidDestination = false;
 		for (int i = 0; i < validMoves.size(); i++)
@@ -209,10 +197,8 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 				break;
 			}
 
-		if (!isValidDestination) {
-			cout << "Position " << destinationPosition.toString() << " is not a valid destination\n\n";
+		if (!isValidDestination)
 			return;
-		}
 
 		Piece * destinationPiece = board.getPieceAt(destinationPosition);
 		board.movePiece(sourcePosition, destinationPosition);
@@ -222,16 +208,13 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 			board.movePiece(destinationPosition, sourcePosition);
 			board.setPieceAt(destinationPosition, destinationPiece);
 
-			/*cout << "Moving " << getPieceName(pieceSelected) << " from " << sourcePosition.toString()
-				<< " to " << destinationPosition.toString() << " is Invalid." << "\n"
-				<< "CHECK not resolved or move leads to CHECK!" << "\n\n";*/
 			input = SOURCE_POSITION;
-
+			GraphicUtils::deselectPieceAt();
 			return;
 		}
 		switchPlayer();
 		input = SOURCE_POSITION;
-		GraphicUtils::deselect();
+		GraphicUtils::deselectPieceAt();
 	}
 }
 

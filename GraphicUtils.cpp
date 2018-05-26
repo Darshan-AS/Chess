@@ -60,15 +60,19 @@ void GraphicUtils::drawBoard(Board board) {
 	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
 	glMaterialfv(GL_FRONT, GL_SHININESS, new GLfloat[4]{ 100.0f });
 	
-	if (board.getCurrentPlayer() == Board::PLAYER_WHITE)
-		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.5f, 0.2f, 1.0f });
+	if (board.isInCheck(Board::PLAYER_WHITE))
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.2f, 1.0f });
+	else if (board.getCurrentPlayer() == Board::PLAYER_WHITE)
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.7f, 0.2f, 1.0f });
 	else
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.3f, 0.32f, 0.3f, 1.0f });
 	glTranslatef(3.5, 0.25 / 2, 8);
 	glutSolidSphere(0.25, 50, 50);
 
-	if (board.getCurrentPlayer() == Board::PLAYER_BLACK)
-		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.5f, 0.2f, 1.0f });
+	if (board.isInCheck(Board::PLAYER_BLACK))
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.2f, 1.0f });
+	else if (board.getCurrentPlayer() == Board::PLAYER_BLACK)
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.7f, 0.2f, 1.0f });
 	else
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.3f, 0.32f, 0.3f, 1.0f });
 	glTranslatef(0, 0, -9);
@@ -130,17 +134,11 @@ struct point {
 
 point spherical(float alpha, float beta, float r) {
 	point p;
-	p.x = r * cos(alpha)*cos(beta);
-	p.y = r * sin(alpha)*cos(beta);
+	p.x = r * cos(alpha) * cos(beta);
+	p.y = r * sin(alpha) * cos(beta);
 	p.z = r * sin(beta);
 	return p;
 }
-
-struct Points {
-	GLfloat x1, x2, x3, x4;
-	GLfloat z1, z2, z3, z4;
-	GLfloat y1, y2, y3, y4;
-};
 
 void GraphicUtils::drawSmoothUnityEllipsoidPatch(float a1, float a2, float b1, float b2)
 {
@@ -182,6 +180,23 @@ void GraphicUtils::drawSmoothUnityEllipsoidPatch(float a1, float a2, float b1, f
 
 void GraphicUtils::drawBottom() {
 	glPushMatrix();
+	glScalef(0.32f, 0.32f, 0.32f);
+
+	glPushMatrix();
+	glTranslatef(0.0f, 1.5f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(1.0f, 0.3f, 50, 50);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, 1.7f, 0.0f);
+	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0, 1.0, 0.2);
+	glutSolidTorus(0.8f, 0.3f, 50, 50);
+	glPopMatrix();
+
+	glPushMatrix();
 	glTranslatef(0.0f, 0.6f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.5, 1.5, 0.8);
@@ -191,8 +206,10 @@ void GraphicUtils::drawBottom() {
 	glPushMatrix();
 	glTranslatef(0.0f, 0.9f, 0.0f);
 	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.4, 1.4, 1.0);
+	glScalef(1.4, 1.4, 0.9);
 	drawSmoothUnityEllipsoidPatch(0, 2 * 3.14, 0, 3.14 / 2);
+	glPopMatrix();
+
 	glPopMatrix();
 }
 
@@ -256,24 +273,12 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCone(0.7f, 5.6f, 50, 50);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	// Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
 
@@ -332,24 +337,12 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCone(0.7f, 5.6f, 50, 50);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	// Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
 
@@ -410,24 +403,12 @@ void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.45f, 0.2f, 40, 40);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	//Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
 
@@ -479,24 +460,12 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.455f, 0.3f, 50, 50);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	// Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
 
@@ -536,24 +505,12 @@ void GraphicUtils::drawKnight(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidTorus(0.4f, 0.1f, 40, 40);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	// Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
 
@@ -589,23 +546,11 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glutSolidCone(1.0f, 3.4f, 50, 50);
 	glPopMatrix();
 
-	// Bottom circles
-	glPushMatrix();
-	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
+	// Bottom rings and ellipsoids
 	glPushMatrix();
-	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
-	glutSolidTorus(0.8f, 0.3f, 50, 50);
-	glPopMatrix();
-
-	// Bottom ellipsoid
+	glTranslatef(x, 0, z);
 	drawBottom();
-
 	glPopMatrix();
 }
