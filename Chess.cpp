@@ -2,10 +2,10 @@
 
 #include "stdafx.h"
 #include "Board.h"
-#include <algorithm>
+//#include <algorithm>
 #include "Chess.h"
 #include <GL/freeglut.h>
-#include "Matrices.h"
+//#include "Matrices.h"
 #include <cmath>
 #include "GraphicUtils.h"
 
@@ -87,7 +87,7 @@ void setUpGameWindow() {
 
 void switchLightsOn() {
 
-	glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[4] { 20.0f, 5.0f, 2.0f, 1.0f });
+	glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[4] { 20.0f, 5.0f, 2.0f, 0.0f });
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
 	glLightfv(GL_LIGHT1, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
 
@@ -95,7 +95,7 @@ void switchLightsOn() {
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, new GLfloat[4]{ 0.1f, 0.1f, 0.1f, 1.0f });
 	glLightfv(GL_LIGHT2, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
 
-	glLightfv(GL_LIGHT3, GL_POSITION, new GLfloat[4]{ 2.0f, 5.0f, 20.0f, 1.0f });
+	glLightfv(GL_LIGHT3, GL_POSITION, new GLfloat[4]{ 2.0f, 5.0f, 20.0f, 0.0f });
 	glLightfv(GL_LIGHT3, GL_DIFFUSE, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
 	glLightfv(GL_LIGHT3, GL_SPECULAR, new GLfloat[4]{ 1.0f, 1.0f, 1.0f, 1.0f });
 }
@@ -116,9 +116,19 @@ void drawGame() {
 }
 
 void showGameOver() {
-	glDisable(GL_LIGHT1);
-	glDisable(GL_LIGHT2);
-	glDisable(GL_LIGHT3);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-1, 1, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
+	glTranslatef(0.0f, 0.8f, 0.0f);
+	glutSolidCube(0.25);
+
+	glutSwapBuffers();
+	glFlush();
 }
 
 void onWindowReshape(int w, int h) {
@@ -167,9 +177,6 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 	static vector<Position> validMoves;
 
 	if (input == SOURCE_POSITION) {
-		if (board.isCheckMate(board.getCurrentPlayer())) {
-			displayGameOver();
-		}
 
 		sourcePosition = Position(row, column);
 		if (!board.isInRange(sourcePosition) || !isValidSource(sourcePosition))
@@ -220,6 +227,13 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 
 void onKeyPressed(unsigned char key, int xCursor, int yCursor) {
 	
+	if (board.isCheckMate(board.getCurrentPlayer())) {
+		if (key == 27) // Escape key
+			exit(0);
+		else
+			return;
+	}
+
 	switch (key) {
 
 	case '1':
@@ -243,6 +257,9 @@ void onKeyPressed(unsigned char key, int xCursor, int yCursor) {
 			glEnable(GL_LIGHT3);
 		break;
 
+	case 27:
+		exit(0);
+
 	default:
 		break;
 	}
@@ -256,10 +273,10 @@ int main(int count, char** arguments) {
 	setUpGameWindow();
 	init();
 
-	glutDisplayFunc(drawGame);
 	glutMouseFunc(onMouseClick);
 	glutKeyboardFunc(onKeyPressed);
 	glutReshapeFunc(onWindowReshape);
+	glutDisplayFunc(drawGame);
 
 	glutMainLoop();
 	return 0;

@@ -14,13 +14,14 @@ void GraphicUtils::deselectPieceAt() {
 	GraphicUtils::validMoves.clear();
 }
 
-void GraphicUtils::drawPiece(Piece * piece, int z, int x) {
+void GraphicUtils::drawPiece(Piece * piece, int row, int column) {
 
 	if (piece == nullptr)
 		return;
 
 	int color = piece->getColor();
-
+	GLfloat z = (GLfloat) row;
+	GLfloat x = (GLfloat)column;
 	
 	if (color == Piece::COLOR_WHITE)
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4]{ 0.78f, 0.721f, 0.643f, 1.0f });
@@ -49,8 +50,8 @@ void GraphicUtils::drawBoard(Board board) {
 	// Wooden base
 	glPushMatrix();
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.5f, 0.25f, 0.0f, 1.0f });
-	glTranslatef(3.5, -0.001, 3.5);
-	glScalef(1, 0.25 / 10, 1);
+	glTranslatef(3.5f, -0.001f, 3.5f);
+	glScalef(1.0f, 0.025f, 1.0f);
 	glutSolidCube(10);
 	glPopMatrix();
 
@@ -60,8 +61,15 @@ void GraphicUtils::drawBoard(Board board) {
 	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[4]{ 0.5f, 0.5f, 0.5f, 1.0f });
 	glMaterialfv(GL_FRONT, GL_SHININESS, new GLfloat[4]{ 100.0f });
 	
-	if (board.isInCheck(Board::PLAYER_WHITE))
+	if (board.isCheckMate(Board::PLAYER_WHITE)) {
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.2f, 1.0f });
+		glDisable(GL_LIGHT2);
+		glDisable(GL_LIGHT3);
+		glutPostRedisplay();
+		glutMouseFunc(NULL);
+	}
+	else if (board.isInCheck(Board::PLAYER_WHITE))
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.0f, 1.0f });
 	else if (board.getCurrentPlayer() == Board::PLAYER_WHITE)
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.7f, 0.2f, 1.0f });
 	else
@@ -69,8 +77,16 @@ void GraphicUtils::drawBoard(Board board) {
 	glTranslatef(3.5, 0.25 / 2, 8);
 	glutSolidSphere(0.25, 50, 50);
 
-	if (board.isInCheck(Board::PLAYER_BLACK))
+	if (board.isCheckMate(Board::PLAYER_BLACK)) {
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.2f, 1.0f });
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.2f, 1.0f });
+		glDisable(GL_LIGHT2);
+		glDisable(GL_LIGHT3);
+		glutPostRedisplay();
+		glutMouseFunc(NULL);
+	}
+	else if (board.isInCheck(Board::PLAYER_BLACK))
+		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.9f, 0.2f, 0.0f, 1.0f });
 	else if (board.getCurrentPlayer() == Board::PLAYER_BLACK)
 		glMaterialfv(GL_FRONT, GL_EMISSION, new GLfloat[4]{ 0.2f, 0.7f, 0.2f, 1.0f });
 	else
@@ -91,7 +107,7 @@ void GraphicUtils::drawBoard(Board board) {
 				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.8f, 0.8f, 0.8f, 1.0f });
 			else
 				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.3f, 0.3f, 0.3f, 1.0f });
-			glTranslatef(column, 0, row);
+			glTranslatef((GLfloat) column, 0.0f, (GLfloat) row);
 			glutSolidCube(1);
 			glPopMatrix();
 		}
@@ -101,7 +117,7 @@ void GraphicUtils::drawBoard(Board board) {
 	if (!sourcePosition.equals(Position(-1, -1))) {
 		glPushMatrix();
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 1.0f, 0.0f, 0.0f, 1.0f });
-		glTranslatef(GraphicUtils::sourcePosition.getColumn(), 0.01, GraphicUtils::sourcePosition.getRow());
+		glTranslatef((GLfloat) GraphicUtils::sourcePosition.getColumn(), 0.01f, (GLfloat) GraphicUtils::sourcePosition.getRow());
 		glutSolidCube(1);
 		glPopMatrix();
 
@@ -111,7 +127,7 @@ void GraphicUtils::drawBoard(Board board) {
 				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.8f, 1.0f, 0.8f, 1.0f });
 			else
 				glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, new GLfloat[4] { 0.2f, 0.5f, 0.2f, 1.0f });
-			glTranslatef(validMoves[i].getColumn(), 0.01, validMoves[i].getRow());
+			glTranslatef((GLfloat) validMoves[i].getColumn(), 0.01f, (GLfloat) validMoves[i].getRow());
 			glutSolidCube(1);
 			glPopMatrix();
 		}
@@ -184,30 +200,30 @@ void GraphicUtils::drawBottom() {
 
 	glPushMatrix();
 	glTranslatef(0.0f, 1.5f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(1.0f, 0.3f, 50, 50);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 1.7f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.8f, 0.3f, 50, 50);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 0.6f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.5, 1.5, 0.8);
-	drawSmoothUnityEllipsoidPatch(0, 2 * 3.14, 0, 3.14 / 2);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(1.5f, 1.5f, 0.8f);
+	drawSmoothUnityEllipsoidPatch(0.0f, 2 * 3.14f, 0.0f, 3.14f / 2);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 0.9f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.4, 1.4, 0.9);
-	drawSmoothUnityEllipsoidPatch(0, 2 * 3.14, 0, 3.14 / 2);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(1.4f, 1.4f, 0.9f);
+	drawSmoothUnityEllipsoidPatch(0.0f, 2 * 3.14f, 0.0f, 3.14f / 2);
 	glPopMatrix();
 
 	glPopMatrix();
@@ -224,7 +240,7 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
 	glRotatef(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.4);
+	glScalef(1.0f, 1.0f, 0.4f);
 	glutSolidTorus(0.5f, 0.2f, 40, 40);
 	glPopMatrix();
 
@@ -244,22 +260,22 @@ void GraphicUtils::drawKing(GLfloat x, GLfloat y, GLfloat z, int color) {
 	// Middle rings
 	glPushMatrix();
 	glTranslatef(0.0f, 4.10f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.3);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.3f);
 	glutSolidTorus(0.6f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 4.30f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 4.4f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
@@ -292,47 +308,47 @@ void GraphicUtils::drawQueen(GLfloat x, GLfloat y, GLfloat z, int color) {
 	// Upper sphere
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
-	glScalef(0.4, 0.4, 0.4);
+	glScalef(0.4f, 0.4f, 0.4f);
 	glutSolidSphere(1, 50, 50);
 	glPopMatrix();
 
 	// Upper extrusion
 	glPushMatrix();
 	glTranslatef(0.0f, 6.0f, 0.0f);
-	glScalef(0.45, 0.1, 0.45);
+	glScalef(0.45f, 0.1f, 0.45f);
 	glutSolidDodecahedron();
-	glRotated(-90, 0.0f, 1.0f, 0.0f);
+	glRotatef(-90, 0.0f, 1.0f, 0.0f);
 	glutSolidDodecahedron();
 	glPopMatrix();
 
 	// Middle rings
 	glPushMatrix();
 	glTranslatef(0.0f, 4.10f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.34);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.34f);
 	glutSolidTorus(0.6f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 4.30f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 4.4f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glutSolidCone(1.05f, 5.1f, 50, 50);
-	glRotated(-180, 0.0f, 1.0f, 0.0f);
+	glRotatef(-180, 0.0f, 1.0f, 0.0f);
 	glTranslatef(0.0f, 0.0f, -5.0f);
 	glutSolidCone(0.7f, 5.6f, 50, 50);
 	glPopMatrix();
@@ -362,43 +378,43 @@ void GraphicUtils::drawBishop(GLfloat x, GLfloat y, GLfloat z, int color) {
 	// Upper rings
 	glPushMatrix();
 	glTranslatef(0.0f, 3.10f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.25);
 	glutSolidTorus(0.6f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 3.1f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.24);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.24f);
 	glutSolidTorus(0.5f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 3.3f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.2);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.4f, 0.2f, 40, 40);
 	glPopMatrix();
 
 	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glutSolidCone(0.85f, 4.5f, 50, 50);
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(0.0f, 4.4f, 0.0f);
 	glRotatef(-90, 1.0f, 0.0f, 0.0f);
-	glScalef(0.48, 0.48, 1.0);
+	glScalef(0.48f, 0.48f, 1.0f);
 	glutSolidSphere(1, 40, 40);
 	glPopMatrix();
 
 	// Middle ring
 	glPushMatrix();
 	glTranslatef(0.0f, 3.71f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 0.25);
 	glutSolidTorus(0.45f, 0.2f, 40, 40);
 	glPopMatrix();
@@ -425,7 +441,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glTranslatef(0.0, 4.0, 0.0);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 	glutSolidCylinder(1.0f, 1.0f, 32, 32);
-	glScalef(1.0, 1.0, 0.1);
+	glScalef(1.0f, 1.0f, 0.1f);
 	glutSolidTorus(0.9f, 0.1f, 50, 50);
 	glPopMatrix();
 
@@ -433,7 +449,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 	glPushMatrix();
 	glTranslatef(0.0, 5.0, 0.0);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0, 1.0, 0.1);
+	glScalef(1.0f, 1.0f, 0.1f);
 	glutSolidTorus(0.9f, 0.1f, 50, 50);
 	glPopMatrix();
 
@@ -454,7 +470,7 @@ void GraphicUtils::drawRook(GLfloat x, GLfloat y, GLfloat z, int color) {
 
 	// Middle Covering
 	glPushMatrix();
-	glTranslatef(0.0, 3.4, 0.0);
+	glTranslatef(0.0f, 3.4f, 0.0f);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 	glScalef(1.0, 1.0, 3.5);
 	glutSolidTorus(0.455f, 0.3f, 50, 50);
@@ -519,7 +535,7 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	
 	glPushMatrix();
 	glTranslatef(x, 0, z);
-	glScalef(0.29 / 1.0f, 0.3 / 1.0f, 0.29 / 1.0f);
+	glScalef(0.29f , 0.3f, 0.29f);
 
 	// Upper sphere
 	GLfloat Pawn_upper_sphere = 4.0f;
@@ -532,9 +548,9 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	// Upper rings
 	glPushMatrix();
 	glTranslatef(0, Pawn_upper_ring, -Pawn_upper_spherex);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glPushMatrix();
-	glScalef(1.0, 1.0, 0.2);
+	glScalef(1.0f, 1.0f, 0.2f);
 	glutSolidTorus(0.8f, 0.2f, 40, 40);
 	glPopMatrix();
 	glPopMatrix();
@@ -542,7 +558,7 @@ void GraphicUtils::drawPawn(GLfloat x, GLfloat y, GLfloat z, int color) {
 	// Body cones
 	glPushMatrix();
 	glTranslatef(0.0f, 1.0f, 0.0f);
-	glRotated(-90, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90, 1.0f, 0.0f, 0.0f);
 	glutSolidCone(1.0f, 3.4f, 50, 50);
 	glPopMatrix();
 
