@@ -29,7 +29,6 @@ public:
 
 public:
 	Piece();
-	~Piece();
 	int getColor();
 	virtual vector<Position> getValidMoves(Board board, Position currentPosition) = 0;
 	bool belongsTo(int playerColor);
