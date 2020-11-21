@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GraphicUtils.h"
+#include <cmath>
 
 Position GraphicUtils::sourcePosition = Position(-1, -1);
 vector<Position> GraphicUtils::validMoves = vector<Position>();
