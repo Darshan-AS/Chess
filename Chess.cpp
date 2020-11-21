@@ -2,10 +2,8 @@
 
 #include "stdafx.h"
 #include "Board.h"
-//#include <algorithm>
 #include "Chess.h"
 #include <GL/freeglut.h>
-//#include "Matrices.h"
 #include <cmath>
 #include "GraphicUtils.h"
 
@@ -223,6 +221,7 @@ void onMouseClick(int button, int state, int xCursor, int yCursor) {
 		input = SOURCE_POSITION;
 		GraphicUtils::deselectPieceAt();
 	}
+	glutPostRedisplay();
 }
 
 void onKeyPressed(unsigned char key, int xCursor, int yCursor) {
